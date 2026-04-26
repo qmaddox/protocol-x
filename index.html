@@ -331,47 +331,63 @@ function selectDay(i) {
 
 async function generateWeek() {
   const btn = document.getElementById('genBtn');
-  btn.disabled = true; btn.textContent = '⏳ Generating...';
-  setLoading('mealPanel','Generating meal plan...');
-  setLoading('woPanel','Generating workouts...');
+  btn.disabled = true;
+  S.grocery = null; S.emailCache = {};
 
   const p = S.currentPhase, w = S.currentWeek, cfg = PHASE_CFG[p];
+  const phaseNote = p===1?'No HIIT. Resistance Mon/Wed/Fri. Zone 2 Tue/Thu. Light full body Sat.'
+    :p===2?'HIIT Tue and Thu. 6 training days.'
+    :p===3?'HIIT Tue/Thu/Sat. Peak volume.'
+    :'HIIT 3x/week. Final cut intensity.';
 
-  const prompt = `You are a Hollywood transformation coach. Generate a complete fresh 7-day meal and workout plan for Week ${w}, Phase ${p} (${cfg.label}).
+  const basePrompt = `Hollywood transformation coach. Week ${w} Phase ${p}. ${PROFILE} Cals ${cfg.cal} Protein ${cfg.protein} Carbs ${cfg.carbs} HIIT ${cfg.hiit}. ${cfg.note}. Phase rule: ${phaseNote}. NEVER: bananas cucumbers cottage-cheese soups. Salmon 3x this half, oat bran at breakfast, vary cuisines. Weights for 38yo 194lbs ${w} weeks training. Respond ONLY raw JSON array of day objects, no wrapper, no markdown: [{"day":"Monday","type":"Push Day","meals":[{"time":"07:30","label":"Breakfast","name":"name","desc":"ingredients and prep","protein":40,"carbs":38,"fat":6,"calories":365}],"totalProtein":185,"totalCarbs":140,"totalFat":35,"totalCalories":1620,"workout":{"type":"Push Chest Shoulders","duration":"65 min","calories":350,"sections":[{"label":"Main","exercises":[{"name":"Bench Press","sets":"4x6","weight":"125-135 lbs","rest":"120s","note":""}]}]}}]`;
 
-${PROFILE}
-
-PHASE ${p}: Calories ${cfg.cal}/day | Protein ${cfg.protein}/day | Carbs: ${cfg.carbs} | HIIT: ${cfg.hiit}
-FOCUS: ${cfg.note}
-VARIETY: Week ${w} meals must be noticeably different from a standard template. Vary cuisines and cooking methods.
-WEIGHTS: Provide specific weight ranges per exercise for a moderately fit 38yo male at 194lbs training for ${w} weeks.
-
-RULES:
-- NEVER include: bananas, cucumbers, cottage cheese, soups
-- Salmon minimum 3 meals this week
-- Sardines at least 1 meal
-- Oat bran at least 3 breakfasts
-- Saturday: refeed ~1900-2000 cal, high carbs
-- Sunday: rest day, ~1200-1300 cal
-- Phase ${p===1?'1: No HIIT. Resistance Mon/Wed/Fri. Zone 2 Tue/Thu. Light full body Sat.':p===2?'2: HIIT Tue and Thu. 6 training days.':p===3?'3: HIIT Tue/Thu/Sat. Peak volume.':'4: HIIT 3x/week. Final cut intensity.'}
-
-Respond ONLY with raw valid JSON, no markdown:
-{"week":${w},"phase":${p},"theme":"6-word week theme","days":[{"day":"Monday","type":"Push Day","meals":[{"time":"07:30","label":"Breakfast","name":"Meal name","desc":"Ingredients and brief prep","protein":40,"carbs":38,"fat":6,"calories":365}],"totalProtein":185,"totalCarbs":140,"totalFat":35,"totalCalories":1620,"workout":{"type":"Push — Chest / Shoulders / Triceps","duration":"65 min","calories":350,"sections":[{"label":"Main Compounds","exercises":[{"name":"Barbell Bench Press","sets":"4x6","weight":"125-135 lbs","rest":"120s","note":"2s eccentric"}]}]}}]}`;
+  function parsedays(raw) {
+    const cleaned = raw.replace(/```json|```/g,'')
+      .replace(/[‘’]/g,"'").replace(/[“”]/g,'"').trim();
+    const aStart = cleaned.indexOf('[');
+    const aEnd = cleaned.lastIndexOf(']');
+    if (aStart !== -1 && aEnd !== -1) {
+      return JSON.parse(cleaned.slice(aStart, aEnd + 1));
+    }
+    const oStart = cleaned.indexOf('{');
+    const oEnd = cleaned.lastIndexOf('}');
+    if (oStart !== -1 && oEnd !== -1) {
+      const obj = JSON.parse(cleaned.slice(oStart, oEnd + 1));
+      return obj.days || [obj];
+    }
+    throw new Error('Could not parse response — try again.');
+  }
 
   try {
-    const data = await callClaude(prompt, 8000);
-    const raw = data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
-    const cleaned = raw.replace(/```json|```/g,'').replace(/[\u2018\u2019]/g,"'").replace(/[\u201C\u201D]/g,'"').trim();
-    const jStart = cleaned.indexOf('{');
-    const jEnd = cleaned.lastIndexOf('}');
-    if (jStart === -1 || jEnd === -1) throw new Error('No JSON in response — try again.');
-    S.plan = JSON.parse(cleaned.slice(jStart, jEnd + 1));
-    S.grocery = null; S.emailCache = {};
+    // Call 1: Mon Tue Wed Thu
+    btn.textContent = '⏳ Days 1-4...';
+    setLoading('mealPanel', 'Generating Mon–Thu...');
+    setLoading('woPanel', 'Generating Mon–Thu...');
+    const prompt1 = basePrompt + ' Generate ONLY Monday Tuesday Wednesday Thursday (4 days).';
+    const data1 = await callClaude(prompt1, 4000);
+    const raw1 = data1.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+    const days1 = parsedays(raw1);
+
+    // Call 2: Fri Sat Sun
+    btn.textContent = '⏳ Days 5-7...';
+    setLoading('mealPanel', 'Generating Fri–Sun...');
+    setLoading('woPanel', 'Generating Fri–Sun...');
+    const prompt2 = basePrompt + ' Generate ONLY Friday Saturday Sunday (3 days). Saturday=refeed ~1900cal high carbs. Sunday=rest ~1200cal light meals only.';
+    const data2 = await callClaude(prompt2, 3000);
+    const raw2 = data2.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+    const days2 = parsedays(raw2);
+
+    const allDays = [...days1, ...days2];
+    if (allDays.length < 6) throw new Error(`Only got ${allDays.length} days — try generating again.`);
+
+    S.plan = { week: w, phase: p, theme: `Week ${w} Protocol`, days: allDays };
     saveState();
     updateProgress();
     renderDay(S.currentDay);
-    toast(`Week ${w} plan ready`, 'ok');
+    toast('Week ' + w + ' plan ready', 'ok');
     setTimeout(() => buildEmailBody(S.currentDay), 1500);
+
   } catch(err) {
     showErr('mealPanel', err.message);
     showErr('woPanel', '');
