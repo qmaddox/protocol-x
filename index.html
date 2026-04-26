@@ -1317,14 +1317,20 @@ async function callClaude(prompt, maxTokens=4000) {
       'anthropic-dangerous-client-side-allow-unsafe-content': 'true'
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: maxTokens,
       messages: [{ role:'user', content: prompt }]
     })
   });
   if (!res.ok) {
     const err = await res.json().catch(()=>({}));
-    throw new Error(err.error?.message || `API error ${res.status}`);
+    const status = res.status;
+    const msg = err.error?.message || 'Unknown error';
+    if (status === 401) throw new Error(`Invalid API key (401). Go to console.anthropic.com and create a fresh key.`);
+    if (status === 403) throw new Error(`API key lacks permissions (403). Make sure your key has API access enabled.`);
+    if (status === 429) throw new Error(`Rate limit or credit issue (429). Check console.anthropic.com/billing — you may need more credits.`);
+    if (status === 404) throw new Error(`Model not found (404). ${msg}`);
+    throw new Error(`API error ${status}: ${msg}`);
   }
   return res.json();
 }
@@ -1336,7 +1342,7 @@ function setLoading(id, msg='Generating...') {
 
 function showErr(id, msg) {
   if (!msg) { document.getElementById(id).innerHTML=''; return; }
-  document.getElementById(id).innerHTML = `<div class="err-box"><strong>Error</strong>${msg}<br><br>Make sure your API key is correct. You can reset it by clearing localStorage and refreshing.</div>`;
+  document.getElementById(id).innerHTML = `<div class="err-box"><strong>Error:</strong> ${msg}</div>`;
 }
 
 function closeAll() {
