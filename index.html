@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protocol X · Hollywood Transformation</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void: #060608;
+  --deep: #0e0e12;
+  --surface: #16161c;
+  --lift: #1e1e26;
+  --border: #2a2a36;
+  --gold: #e8c84a;
+  --gold2: #f0a500;
+  --red: #e03232;
+  --ice: #7ec8e3;
+  --green: #4ae882;
+  --text: #eeebe4;
+  --muted: #5a5a6a;
+  --dim: #333340;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--void);
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+}
+
+/* ── SETUP SCREEN ── */
+#setupScreen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--void);
+}
+.setup-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  max-width: 480px;
+  width: 100%;
+  padding: 32px;
+}
+.setup-logo {
+  font-family: 'Anton', sans-serif;
+  font-size: 36px;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.setup-logo span { color: var(--gold); }
+.setup-sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+.setup-field { margin-bottom: 18px; }
+.setup-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 6px;
+}
+.setup-input {
+  width: 100%;
+  background: var(--deep);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 11px 14px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.setup-input:focus { border-color: var(--gold); }
+.setup-input::placeholder { color: var(--muted); }
+.setup-note {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: 6px;
+}
+.setup-btn {
+  width: 100%;
+  background: var(--gold);
+  border: none;
+  color: var(--void);
+  font-family: 'Anton', sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  padding: 14px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.15s;
+}
+.setup-btn:hover { background: var(--gold2); }
+.setup-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.api-notice {
+  border-left: 3px solid var(--gold);
+  background: rgba(232,200,74,0.05);
+  padding: 12px 14px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.api-notice strong { color: var(--gold); display: block; margin-bottom: 4px; }
+
+/* ── MAIN APP ── */
+#appScreen { display: none; }
+
+.app-header {
+  background: var(--deep);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.logo {
+  font-family: 'Anton', sans-serif;
+  font-size: 20px;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  white-space: nowrap;
+}
+.logo span { color: var(--gold); }
+.week-chip {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  background: rgba(232,200,74,0.08);
+  border: 1px solid rgba(232,200,74,0.2);
+  padding: 4px 10px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.hbtns { display: flex; gap: 6px; flex-wrap: wrap; }
+.hbtn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.hbtn:hover { border-color: var(--gold); color: var(--gold); }
+.hbtn.gold { background: var(--gold); color: var(--void); border-color: var(--gold); }
+.hbtn.gold:hover { background: var(--gold2); border-color: var(--gold2); }
+.hbtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.phase-bar {
+  background: var(--deep);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 20px;
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  align-items: center;
+}
+.phase-bar::-webkit-scrollbar { display: none; }
+.phase-lbl {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+  margin-right: 4px;
+}
+.pbtn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.pbtn.active { background: var(--gold); color: var(--void); border-color: var(--gold); }
+
+.prog-bar {
+  background: var(--deep);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.prog-lbl {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.prog-track { flex: 1; height: 3px; background: var(--border); border-radius: 2px; }
+.prog-fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width 0.5s ease; }
+.prog-pct { font-family: 'Anton', sans-serif; font-size: 15px; color: var(--gold); white-space: nowrap; }
+
+.day-nav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.day-nav::-webkit-scrollbar { display: none; }
+.dtab {
+  flex: 1;
+  min-width: 72px;
+  padding: 10px 6px;
+  text-align: center;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+.dtab:hover { background: var(--lift); }
+.dtab.active { border-bottom-color: var(--gold); }
+.dtab .dn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+}
+.dtab.active .dn { color: var(--gold); }
+.dtab .dt {
+  font-size: 9px;
+  color: var(--dim);
+  display: block;
+  margin-top: 2px;
+  font-family: 'Barlow Condensed', sans-serif;
+  text-transform: uppercase;
+}
+.dtab.active .dt { color: var(--muted); }
+
+.panels { display: grid; grid-template-columns: 1fr 1fr; }
+@media (max-width: 680px) { .panels { grid-template-columns: 1fr; } }
+
+.panel { border-right: 1px solid var(--border); }
+.panel:last-child { border-right: none; }
+.panel-hd {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--deep);
+  position: sticky;
+  top: 52px;
+  z-index: 10;
+}
+.panel-ttl {
+  font-family: 'Anton', sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+}
+.panel-meta {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.panel-body { padding: 14px 18px; }
+
+/* MEAL CARDS */
+.mc {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  margin-bottom: 8px;
+  position: relative;
+  overflow: hidden;
+}
+.mc::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: var(--gold);
+}
+.mc-top {
+  padding: 9px 12px 9px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+.mc-time {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 2px;
+}
+.mc-name { font-size: 13px; font-weight: 500; }
+.mc-kcal {
+  font-family: 'Anton', sans-serif;
+  font-size: 17px;
+  color: var(--gold);
+  white-space: nowrap;
+  line-height: 1;
+}
+.mc-kcal small {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 9px;
+  color: var(--muted);
+  display: block;
+  text-align: right;
+}
+.mc-bot { padding: 0 12px 10px 16px; }
+.mc-desc { font-size: 11px; color: var(--muted); line-height: 1.5; margin-bottom: 7px; }
+.macros { display: flex; gap: 5px; flex-wrap: wrap; }
+.mac {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  padding: 2px 7px;
+  border: 1px solid;
+}
+.mp { border-color: rgba(232,200,74,0.3); color: var(--gold); }
+.mc2 { border-color: rgba(240,165,0,0.3); color: var(--gold2); }
+.mf { border-color: rgba(126,200,227,0.3); color: var(--ice); }
+
+.day-tots {
+  background: var(--deep);
+  border: 1px solid rgba(232,200,74,0.12);
+  padding: 10px 14px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+.tot { text-align: center; }
+.tv { font-family: 'Anton', sans-serif; font-size: 20px; color: var(--gold); display: block; line-height: 1; }
+.tl { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; }
+
+/* EXERCISES */
+.ex-sec { margin-bottom: 12px; }
+.ex-sec-lbl {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+}
+.ex-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 7px 10px;
+  background: var(--deep);
+  border-left: 2px solid transparent;
+  margin-bottom: 2px;
+  transition: border-left-color 0.15s;
+}
+.ex-row:hover { border-left-color: var(--gold); }
+.ex-nm { font-size: 12px; color: var(--text); }
+.ex-sub2 {
+  font-size: 10px;
+  color: var(--muted);
+  font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.ex-dt {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold2);
+  text-align: right;
+  white-space: nowrap;
+}
+.ex-rst {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  color: var(--muted);
+  text-align: right;
+}
+.wo-sum {
+  background: rgba(232,200,74,0.04);
+  border: 1px solid rgba(232,200,74,0.1);
+  padding: 9px 12px;
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.wsi span:first-child { font-family: 'Anton', sans-serif; font-size: 18px; color: var(--gold); display: block; line-height: 1; }
+.wsi span:last-child { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; }
+
+.rest-card { text-align: center; padding: 40px 16px; }
+.rest-word { font-family: 'Anton', sans-serif; font-size: 60px; color: var(--dim); letter-spacing: 0.05em; }
+.rest-items { margin-top: 16px; display: flex; flex-direction: column; gap: 5px; max-width: 220px; margin-left: auto; margin-right: auto; }
+.rest-item { padding: 7px 12px; background: var(--deep); border: 1px solid var(--border); font-size: 11px; color: var(--muted); text-align: left; }
+
+/* LOADING */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+  gap: 14px;
+}
+.spin {
+  width: 32px; height: 32px;
+  border: 2px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: sp 0.8s linear infinite;
+}
+@keyframes sp { to { transform: rotate(360deg); } }
+.spin-txt {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* MODAL */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(6,6,8,0.94);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  max-width: 540px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.modal-hd {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 1;
+}
+.modal-ttl { font-family: 'Anton', sans-serif; font-size: 18px; letter-spacing: 0.05em; }
+.modal-x { background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; padding: 2px 6px; }
+.modal-x:hover { color: var(--text); }
+.modal-bd { padding: 18px; }
+
+/* GROCERY */
+.gcat { margin-bottom: 14px; }
+.gcat-ttl {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 5px;
+  margin-bottom: 7px;
+  font-weight: 700;
+}
+.gitem {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(42,42,54,0.4);
+  font-size: 12px;
+}
+.gitem:last-child { border-bottom: none; }
+.gcheck {
+  width: 15px; height: 15px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s;
+}
+.gcheck.on { background: var(--gold); border-color: var(--gold); }
+.gcheck.on::after { content: '✓'; font-size: 9px; color: var(--void); font-weight: 700; }
+.gqty { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; color: var(--gold2); min-width: 56px; font-weight: 700; }
+.gitem.done { text-decoration: line-through; opacity: 0.35; }
+
+/* EMAIL */
+.fl { margin-bottom: 14px; }
+.fl label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 5px;
+}
+.fi {
+  width: 100%;
+  background: var(--deep);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 13px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.fi:focus { border-color: var(--gold); }
+.fi::placeholder { color: var(--muted); }
+textarea.fi { min-height: 160px; resize: vertical; font-size: 11px; line-height: 1.6; }
+
+.note {
+  padding: 10px 14px;
+  font-size: 11px;
+  line-height: 1.6;
+  border-left: 3px solid;
+  margin-bottom: 12px;
+}
+.ng { border-color: var(--gold); background: rgba(232,200,74,0.04); color: #a09050; }
+.ng strong { color: var(--gold); }
+.nr { border-color: var(--red); background: rgba(224,50,50,0.04); color: #a07070; }
+.nr strong { color: var(--red); }
+.ngreen { border-color: var(--green); background: rgba(74,232,130,0.04); color: #60a070; }
+.ngreen strong { color: var(--green); }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 20px; right: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  padding: 10px 16px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  z-index: 999;
+  transform: translateY(60px);
+  opacity: 0;
+  transition: all 0.25s;
+  max-width: 280px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.err { border-left-color: var(--red); }
+.toast.ok { border-left-color: var(--green); }
+
+/* ERROR NOTICE */
+.err-box {
+  background: rgba(224,50,50,0.06);
+  border: 1px solid rgba(224,50,50,0.2);
+  padding: 14px 16px;
+  margin: 16px 0;
+  font-size: 12px;
+  color: #c08080;
+  line-height: 1.6;
+}
+.err-box strong { color: var(--red); display: block; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<!-- ── SETUP SCREEN ── -->
+<div id="setupScreen">
+  <div class="setup-box">
+    <div class="setup-logo">PROTOCOL <span>X</span></div>
+    <div class="setup-sub">Hollywood Transformation · 6-Month Protocol</div>
+
+    <div class="api-notice">
+      <strong>One-time setup required</strong>
+      This app uses the Anthropic Claude API to generate your personalized weekly plans, grocery lists, and daily emails. You need an API key from <strong>console.anthropic.com</strong> — free to create, pay-as-you-go (~$0.01–0.05 per plan generation).
+    </div>
+
+    <div class="setup-field">
+      <label class="setup-label">Anthropic API Key</label>
+      <input class="setup-input" type="password" id="apiKeyInput" placeholder="sk-ant-api03-...">
+      <div class="setup-note">Your key is stored only in this browser's local storage. It is never sent anywhere except directly to api.anthropic.com.</div>
+    </div>
+
+    <div class="setup-field">
+      <label class="setup-label">Your Email Address (for daily schedules)</label>
+      <input class="setup-input" type="email" id="emailSetupInput" placeholder="you@example.com">
+      <div class="setup-note">Used to pre-address your daily schedule emails.</div>
+    </div>
+
+    <div class="setup-field">
+      <label class="setup-label">Current Week (1–28)</label>
+      <input class="setup-input" type="number" id="weekSetupInput" value="1" min="1" max="28">
+    </div>
+
+    <button class="setup-btn" id="setupBtn" onclick="saveSetup()">LAUNCH PROTOCOL X</button>
+
+    <div style="margin-top:20px;font-size:11px;color:var(--muted);line-height:1.6">
+      <strong style="color:var(--text)">Production deployment options:</strong><br>
+      See the "Deploy as a Real App" button inside the app after setup.
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN APP ── -->
+<div id="appScreen">
+  <div class="app-header">
+    <div class="logo">PROTOCOL <span>X</span></div>
+    <div class="week-chip" id="weekChip">Week 1 · Phase 1</div>
+    <div class="hbtns">
+      <button class="hbtn" onclick="openGrocery()">🛒 Grocery</button>
+      <button class="hbtn" onclick="openEmail()">📧 Email Today</button>
+      <button class="hbtn" onclick="openDeploy()">🚀 Deploy</button>
+      <button class="hbtn gold" id="genBtn" onclick="generateWeek()">⚡ New Week</button>
+    </div>
+  </div>
+
+  <div class="phase-bar">
+    <span class="phase-lbl">Phase:</span>
+    <button class="pbtn active" onclick="jumpPhase(1,this)">1 · Adapt</button>
+    <button class="pbtn" onclick="jumpPhase(2,this)">2 · Accelerate</button>
+    <button class="pbtn" onclick="jumpPhase(3,this)">3 · Deep Cut</button>
+    <button class="pbtn" onclick="jumpPhase(4,this)">4 · Camera Ready</button>
+  </div>
+
+  <div class="prog-bar">
+    <span class="prog-lbl">6-Month Progress</span>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:4%"></div></div>
+    <span class="prog-pct" id="progPct">4%</span>
+    <span class="prog-lbl" id="progWks" style="margin-left:4px">Week 1 of 28</span>
+  </div>
+
+  <div class="day-nav" id="dayNav"></div>
+
+  <div class="panels">
+    <div class="panel">
+      <div class="panel-hd">
+        <span class="panel-ttl">MEALS</span>
+        <span class="panel-meta" id="mealMeta">—</span>
+      </div>
+      <div class="panel-body" id="mealPanel">
+        <div class="loading"><div class="spin"></div><div class="spin-txt">Ready to generate</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-hd">
+        <span class="panel-ttl">TRAINING</span>
+        <span class="panel-meta" id="woMeta">—</span>
+      </div>
+      <div class="panel-body" id="woPanel">
+        <div class="loading"><div class="spin"></div><div class="spin-txt">Ready to generate</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── GROCERY MODAL ── -->
+<div class="overlay" id="gModal">
+  <div class="modal">
+    <div class="modal-hd">
+      <span class="modal-ttl">GROCERY LIST</span>
+      <button class="modal-x" onclick="closeAll()">✕</button>
+    </div>
+    <div class="modal-bd" id="gBody">
+      <div class="loading"><div class="spin"></div><div class="spin-txt">Building list...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── EMAIL MODAL ── -->
+<div class="overlay" id="eModal">
+  <div class="modal">
+    <div class="modal-hd">
+      <span class="modal-ttl">TODAY'S SCHEDULE</span>
+      <button class="modal-x" onclick="closeAll()">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div class="note ng"><strong>How daily emails work</strong> Your daily schedule is auto-generated when you open this panel. Copy it to clipboard, then paste into your email app — or use the "Open Mail" button if you're on desktop. For fully automated daily delivery, see the 🚀 Deploy section.</div>
+      <div class="fl">
+        <label>Your Email</label>
+        <input class="fi" type="email" id="emailTo" placeholder="you@example.com">
+      </div>
+      <div class="fl">
+        <label>Today's Schedule (auto-generated)</label>
+        <textarea class="fi" id="emailBody" readonly placeholder="Loading..."></textarea>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="hbtn" onclick="copyEmail()" style="flex:1">📋 Copy to Clipboard</button>
+        <button class="hbtn gold" onclick="openMail()" style="flex:1">✉️ Open Mail App</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DEPLOY MODAL ── -->
+<div class="overlay" id="dModal">
+  <div class="modal">
+    <div class="modal-hd">
+      <span class="modal-ttl">DEPLOY AS YOUR OWN APP</span>
+      <button class="modal-x" onclick="closeAll()">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div class="note ng"><strong>This is a prototype running in Claude.ai.</strong> To run this as a real production app with automated daily emails, you have three options below — ranging from no-code to developer.</div>
+
+      <div style="margin-bottom:18px">
+        <div style="font-family:'Anton',sans-serif;font-size:16px;letter-spacing:0.05em;margin-bottom:8px;color:var(--gold)">OPTION 1 — Easiest: Replit (No Code)</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:10px">Replit is a browser-based coding environment. You can deploy this as a live web app in under 10 minutes with zero coding knowledge.</div>
+        <div style="background:var(--deep);border:1px solid var(--border);padding:12px 14px;font-size:11px;color:var(--muted);line-height:1.8">
+          1. Go to <strong style="color:var(--text)">replit.com</strong> → Create account (free)<br>
+          2. New Repl → HTML/CSS/JS template<br>
+          3. Paste this entire HTML file into index.html<br>
+          4. Add your Anthropic API key as a Secret named <strong style="color:var(--gold)">ANTHROPIC_API_KEY</strong><br>
+          5. Click Run — your app is live at a public URL<br>
+          6. For daily emails: add a <strong style="color:var(--text)">cron job</strong> in Replit that hits a /send-daily endpoint at 6am
+        </div>
+      </div>
+
+      <div style="margin-bottom:18px">
+        <div style="font-family:'Anton',sans-serif;font-size:16px;letter-spacing:0.05em;margin-bottom:8px;color:var(--gold)">OPTION 2 — Best: Vercel + Resend (Free Tier)</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:10px">Vercel hosts your app for free. Resend sends transactional emails for free (up to 100/day). This gives you real automated daily emails every morning.</div>
+        <div style="background:var(--deep);border:1px solid var(--border);padding:12px 14px;font-size:11px;color:var(--muted);line-height:1.8">
+          1. <strong style="color:var(--text)">vercel.com</strong> → New project → paste code into Next.js template<br>
+          2. <strong style="color:var(--text)">resend.com</strong> → Get free API key<br>
+          3. Add environment variables: ANTHROPIC_API_KEY + RESEND_API_KEY + YOUR_EMAIL<br>
+          4. Create a Vercel Cron Job (vercel.json) to trigger /api/daily-email at 6:00 AM<br>
+          5. The cron job generates today's plan with Claude → sends via Resend → arrives in your inbox every morning<br>
+          6. <strong style="color:var(--gold)">Ask Claude to build the full Next.js version of this app</strong> — it can write all the API routes and cron config for you
+        </div>
+      </div>
+
+      <div style="margin-bottom:18px">
+        <div style="font-family:'Anton',sans-serif;font-size:16px;letter-spacing:0.05em;margin-bottom:8px;color:var(--gold)">OPTION 3 — No Deploy: iOS Shortcut</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:10px">If you just want automated daily emails without any deployment, use the iOS Shortcuts app to call the Claude API each morning and email you the result.</div>
+        <div style="background:var(--deep);border:1px solid var(--border);padding:12px 14px;font-size:11px;color:var(--muted);line-height:1.8">
+          1. Open <strong style="color:var(--text)">Shortcuts app</strong> on iPhone → New Shortcut<br>
+          2. Add action: <strong style="color:var(--text)">"Get contents of URL"</strong> → api.anthropic.com/v1/messages<br>
+          3. Method: POST, Headers: x-api-key + content-type, Body: your daily prompt JSON<br>
+          4. Add action: <strong style="color:var(--text)">"Send Email"</strong> → parse Claude response → send to yourself<br>
+          5. Set automation: <strong style="color:var(--text)">Run at 6:00 AM daily</strong><br>
+          6. <strong style="color:var(--gold)">Ask Claude to write the exact Shortcut configuration</strong> for you
+        </div>
+      </div>
+
+      <div class="note ng"><strong>Recommended path:</strong> Start with Option 3 (iOS Shortcut) to get daily emails immediately with zero setup. Then ask Claude to build the full Vercel + Resend version when you want a proper app. Claude can write every line of that code for you — just start a new conversation and say "Build me a Next.js version of my Hollywood Protocol app with Vercel cron jobs and Resend email."</div>
+
+      <button class="hbtn gold" onclick="copyAppCode()" style="width:100%;margin-top:4px">📋 Copy This App's HTML Code</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DAY_SHORTS = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
+const DAY_TYPES = ['Push','HIIT','Pull','HIIT+Z2','Legs','Full Body','Rest'];
+const PHASE_CFG = {
+  1: { label:'Adapt', startWk:1,  cal:'1,600–1,750', protein:'180g', carbs:'Moderate',          hiit:'Zone 2 only — no HIIT',   note:'Semaglutide adaptation. Train at 70%. Build habits. No HIIT.' },
+  2: { label:'Accel', startWk:4,  cal:'1,400–1,550', protein:'180g', carbs:'Cycling',            hiit:'2×/week',                  note:'Full throttle. 6 training days. Aggressive deficit starts.' },
+  3: { label:'Cut',   startWk:9,  cal:'1,350–1,500', protein:'185g', carbs:'Aggressive cycling', hiit:'2–3×/week',                note:'Deep cut. Visceral fat elimination. Peak training volume.' },
+  4: { label:'Final', startWk:19, cal:'1,300–1,500', protein:'190g', carbs:'Very low rest days', hiit:'3×/week + peak week prep', note:'Camera-ready final cut. Glycogen loading in final 2 weeks.' }
+};
+
+const PROFILE = `PROFILE: Male, 38yo, Portland OR. Weight 194.6lbs, BF 27.8%, Lean 140.5lbs, Visceral Fat 10, BMR 1747.
+Blood: Glucose 81✓, HbA1c 5.5✓, TG 50✓, HDL 57✓, LDL 159⚠ HIGH, Cholesterol 224⚠ HIGH.
+Meds: Wegovy oral semaglutide (4mg now → 9mg in 3 weeks). Take pill on waking, 30min before eating.
+Goal: Visible abs, ~159lbs, ~12% BF in 6-7 months.
+NEVER include: bananas, cucumbers, cottage cheese, soups.
+LDL protocol: salmon 3×/wk, sardines 1×/wk, oat bran daily, chickpeas/walnuts/olive oil throughout.
+Protein: chicken breast, turkey, fish, egg whites, whey isolate, Greek yogurt, shrimp. Red meat max 2×/wk.
+Saturday = refeed (~1900-2000cal, higher carbs). Sunday = rest + low cal.`;
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let S = {
+  apiKey: '',
+  userEmail: '',
+  currentWeek: 1,
+  currentPhase: 1,
+  currentDay: 0,
+  plan: null,
+  grocery: null,
+  checks: {},
+  emailCache: {}
+};
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+function init() {
+  // Load from localStorage
+  try {
+    const saved = localStorage.getItem('protocolX');
+    if (saved) {
+      const d = JSON.parse(saved);
+      S.apiKey = d.apiKey || '';
+      S.userEmail = d.userEmail || '';
+      S.currentWeek = d.week || 1;
+      S.currentPhase = d.phase || 1;
+      S.plan = d.plan || null;
+      S.grocery = d.grocery || null;
+      S.checks = d.checks || {};
+    }
+  } catch(e) {}
+
+  if (S.apiKey) {
+    launchApp();
+  } else {
+    document.getElementById('setupScreen').style.display = 'flex';
+  }
+}
+
+function saveState() {
+  try {
+    localStorage.setItem('protocolX', JSON.stringify({
+      apiKey: S.apiKey,
+      userEmail: S.userEmail,
+      week: S.currentWeek,
+      phase: S.currentPhase,
+      plan: S.plan,
+      grocery: S.grocery,
+      checks: S.checks
+    }));
+  } catch(e) {}
+}
+
+// ── SETUP ────────────────────────────────────────────────────────────────────
+function saveSetup() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  const email = document.getElementById('emailSetupInput').value.trim();
+  const week = parseInt(document.getElementById('weekSetupInput').value) || 1;
+
+  if (!key.startsWith('sk-ant')) {
+    toast('Enter a valid Anthropic API key (starts with sk-ant)', 'err');
+    return;
+  }
+  if (!email || !email.includes('@')) {
+    toast('Enter a valid email address', 'err');
+    return;
+  }
+
+  S.apiKey = key;
+  S.userEmail = email;
+  S.currentWeek = Math.min(28, Math.max(1, week));
+  S.currentPhase = weekToPhase(S.currentWeek);
+  saveState();
+  launchApp();
+}
+
+function launchApp() {
+  document.getElementById('setupScreen').style.display = 'none';
+  document.getElementById('appScreen').style.display = 'block';
+  buildDayNav();
+  updateProgress();
+
+  // Prefill email
+  document.getElementById('emailTo').value = S.userEmail;
+
+  if (S.plan) {
+    renderDay(S.currentDay);
+  } else {
+    generateWeek();
+  }
+
+  // Auto-generate today's email after plan loads
+  scheduleAutoEmail();
+}
+
+// ── DAY NAV ───────────────────────────────────────────────────────────────────
+function buildDayNav() {
+  const nav = document.getElementById('dayNav');
+  nav.innerHTML = DAYS.map((d,i) => `
+    <div class="dtab ${i===S.currentDay?'active':''}" onclick="selectDay(${i})">
+      <span class="dn">${DAY_SHORTS[i]}</span>
+      <span class="dt">${DAY_TYPES[i]}</span>
+    </div>`).join('');
+}
+
+function selectDay(i) {
+  S.currentDay = i;
+  document.querySelectorAll('.dtab').forEach((t,j) => t.classList.toggle('active', j===i));
+  renderDay(i);
+  // Clear email cache for this day so it regenerates
+  delete S.emailCache[i];
+}
+
+// ── GENERATE WEEK ─────────────────────────────────────────────────────────────
+async function generateWeek() {
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Generating...';
+  setLoading('mealPanel','Generating meal plan...');
+  setLoading('woPanel','Generating workouts...');
+
+  const p = S.currentPhase, w = S.currentWeek, cfg = PHASE_CFG[p];
+
+  const prompt = `You are a Hollywood transformation coach. Generate a complete fresh 7-day plan for Week ${w}, Phase ${p} (${cfg.label}).
+
+${PROFILE}
+
+PHASE ${p} SPECS: Calories ${cfg.cal}/day | Protein ${cfg.protein}/day | Carbs: ${cfg.carbs} | HIIT: ${cfg.hiit}
+PHASE FOCUS: ${cfg.note}
+WEEK ${w} VARIETY NOTE: Make meals noticeably different from a standard template. Vary cuisines, cooking methods, protein preparations. Week ${w} should feel fresh.
+
+EXERCISE WEIGHTS: Provide specific weight ranges for each exercise appropriate for a moderately fit 38yo male at 194lbs who has been training for ${w} weeks. Progress weights each week.
+
+RULES:
+- NEVER include: bananas, cucumbers, cottage cheese, soups of any kind
+- Salmon at least 3 meals this week (LDL protocol)  
+- Sardines at least 1 meal
+- Oat bran at least 3 breakfasts
+- Saturday: refeed day ~1900-2000 cal, high carbs
+- Sunday: rest day, low cal ~1200-1300, light meals only
+- Phase ${p === 1 ? '1: No HIIT. Monday/Wednesday/Friday = resistance. Tuesday/Thursday = Zone 2 walk 40min. Saturday = light full body.' : p === 2 ? '2: HIIT on Tuesday and Thursday. 6 training days.' : p === 3 ? '3: HIIT Tuesday/Thursday/Saturday. Peak volume.' : '4: HIIT 3x/week. Final cut intensity. Include peak week protocol notes in Saturday/Sunday.'}
+
+Respond ONLY with raw valid JSON, no markdown fences, no explanation:
+{
+  "week": ${w},
+  "phase": ${p},
+  "theme": "6-word week theme",
+  "days": [
+    {
+      "day": "Monday",
+      "type": "Push Day",
+      "meals": [
+        { "time":"07:30", "label":"Breakfast", "name":"Meal name", "desc":"Ingredients and brief prep method", "protein":40, "carbs":38, "fat":6, "calories":365 }
+      ],
+      "totalProtein": 185,
+      "totalCarbs": 140,
+      "totalFat": 35,
+      "totalCalories": 1620,
+      "workout": {
+        "type": "Push — Chest / Shoulders / Triceps",
+        "duration": "65 min",
+        "calories": 350,
+        "sections": [
+          {
+            "label": "Main Compounds",
+            "exercises": [
+              { "name": "Barbell Bench Press", "sets": "4×6", "weight": "125–135 lbs", "rest": "120s", "note": "2s eccentric" }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}`;
+
+  try {
+    const data = await callClaude(prompt, 8000);
+    const raw = data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+    S.plan = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    S.grocery = null;
+    S.emailCache = {};
+    saveState();
+    updateProgress();
+    renderDay(S.currentDay);
+    toast(`Week ${w} plan ready`, 'ok');
+    // Auto-generate today's email
+    scheduleAutoEmail();
+  } catch(err) {
+    showErr('mealPanel', err.message || 'Generation failed. Check your API key and try again.');
+    showErr('woPanel', '');
+    toast('Generation failed — check API key', 'err');
+  }
+
+  btn.disabled = false;
+  btn.textContent = '⚡ New Week';
+}
+
+// ── AUTO EMAIL ────────────────────────────────────────────────────────────────
+function scheduleAutoEmail() {
+  // Auto-generate email for current day after a short delay
+  setTimeout(async () => {
+    if (S.plan && !S.emailCache[S.currentDay]) {
+      await buildEmailBody(S.currentDay);
+    }
+  }, 2000);
+}
+
+async function buildEmailBody(dayIdx) {
+  if (!S.plan) return '';
+  if (S.emailCache[dayIdx]) return S.emailCache[dayIdx];
+
+  const day = S.plan.days[dayIdx];
+  if (!day) return '';
+
+  const prompt = `Write a concise motivational daily schedule email for a Hollywood transformation client.
+
+DAY: ${day.day}, Week ${S.currentWeek}, Phase ${S.currentPhase}
+PROFILE: Male, 38yo, on Wegovy oral semaglutide (take on waking, 30 min before eating)
+
+TODAY'S MEALS:
+${(day.meals||[]).map(m=>`${m.time} ${m.label}: ${m.name} — ${m.desc} | P:${m.protein}g C:${m.carbs}g F:${m.fat}g ${m.calories}cal`).join('\n')}
+
+TODAY'S WORKOUT: ${day.workout?.type || 'Rest Day'}
+${day.workout?.sections ? day.workout.sections.map(s=>
+  s.label + ':\n' + s.exercises.map(e=>`  ${e.name}: ${e.sets} @ ${e.weight||'bodyweight'} | Rest: ${e.rest||'—'}`).join('\n')
+).join('\n') : 'Active recovery only — 30 min walk maximum.'}
+
+DAILY TOTALS: ${day.totalCalories}cal | ${day.totalProtein}g protein | ${day.totalCarbs}g carbs | ${day.totalFat}g fat
+
+Write in plain text (no HTML). Include:
+1. Subject line (first line, prefixed "SUBJECT: ")
+2. Brief motivational opener (2 sentences)
+3. Wegovy reminder
+4. Each meal with time, name, ingredients and macros
+5. Full workout with sets/weights/rest
+6. Daily targets
+7. Short closing line
+
+Keep it tight and actionable. This is a Hollywood production schedule.`;
+
+  try {
+    const data = await callClaude(prompt, 1200);
+    const text = data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+    S.emailCache[dayIdx] = text;
+    return text;
+  } catch(e) {
+    return '';
+  }
+}
+
+// ── RENDER DAY ────────────────────────────────────────────────────────────────
+function renderDay(idx) {
+  if (!S.plan) return;
+  const day = S.plan.days[idx];
+  if (!day) return;
+
+  document.getElementById('mealMeta').textContent = `${day.totalCalories||'—'}cal · ${day.totalProtein||'—'}g prot`;
+  document.getElementById('woMeta').textContent = day.workout?.duration || '—';
+
+  renderMeals(day);
+  renderWorkout(day);
+}
+
+function renderMeals(day) {
+  const p = document.getElementById('mealPanel');
+  if (!day.meals?.length) {
+    p.innerHTML = `<div class="rest-card"><div class="rest-word">REST</div><p style="color:var(--muted);font-size:12px;margin-top:10px">Recovery day — light meals, prioritize protein.</p></div>`;
+    return;
+  }
+  p.innerHTML = day.meals.map(m=>`
+    <div class="mc">
+      <div class="mc-top">
+        <div><span class="mc-time">${m.time} · ${m.label}</span><div class="mc-name">${m.name}</div></div>
+        <div class="mc-kcal">${m.calories}<small>cal</small></div>
+      </div>
+      <div class="mc-bot">
+        <div class="mc-desc">${m.desc}</div>
+        <div class="macros">
+          <span class="mac mp">P:${m.protein}g</span>
+          <span class="mac mc2">C:${m.carbs}g</span>
+          <span class="mac mf">F:${m.fat}g</span>
+        </div>
+      </div>
+    </div>`).join('') + `
+  <div class="day-tots">
+    <div class="tot"><span class="tv">${day.totalProtein}g</span><span class="tl">Protein</span></div>
+    <div class="tot"><span class="tv">${day.totalCarbs}g</span><span class="tl">Carbs</span></div>
+    <div class="tot"><span class="tv">${day.totalFat}g</span><span class="tl">Fat</span></div>
+    <div class="tot"><span class="tv">${day.totalCalories}</span><span class="tl">Calories</span></div>
+  </div>`;
+}
+
+function renderWorkout(day) {
+  const p = document.getElementById('woPanel');
+  const wo = day.workout;
+  if (!wo || day.day==='Sunday' || wo.type?.toLowerCase().includes('rest')) {
+    p.innerHTML = `
+      <div class="rest-card">
+        <div class="rest-word">REST</div>
+        <div class="rest-items">
+          <div class="rest-item">✓ Take Wegovy pill on waking</div>
+          <div class="rest-item">✓ 30-min walk max</div>
+          <div class="rest-item">✓ Meal prep for Mon–Wed</div>
+          <div class="rest-item">✓ Weekly weigh-in</div>
+          <div class="rest-item">✓ 8+ hours sleep target</div>
+        </div>
+      </div>`;
+    return;
+  }
+  p.innerHTML = `
+    <div style="font-family:'Anton',sans-serif;font-size:17px;letter-spacing:0.05em;margin-bottom:12px">${wo.type}</div>
+    ${(wo.sections||[]).map(sec=>`
+      <div class="ex-sec">
+        <div class="ex-sec-lbl">${sec.label}</div>
+        ${(sec.exercises||[]).map(ex=>`
+          <div class="ex-row">
+            <div><div class="ex-nm">${ex.name}</div><div class="ex-sub2">${ex.weight||''} ${ex.note?'· '+ex.note:''}</div></div>
+            <div><div class="ex-dt">${ex.sets}</div><div class="ex-rst">${ex.rest||''}</div></div>
+          </div>`).join('')}
+      </div>`).join('')}
+    <div class="wo-sum">
+      <div class="wsi"><span>${wo.duration}</span><span>Duration</span></div>
+      <div class="wsi"><span>~${wo.calories}</span><span>Cal Burned</span></div>
+    </div>`;
+}
+
+// ── GROCERY ───────────────────────────────────────────────────────────────────
+async function openGrocery() {
+  document.getElementById('gModal').classList.add('open');
+  if (S.grocery) { renderGrocery(S.grocery); return; }
+  if (!S.plan) {
+    document.getElementById('gBody').innerHTML = `<div class="note ng"><strong>Generate a week plan first</strong> using ⚡ New Week.</div>`;
+    return;
+  }
+
+  setLoading('gBody','Building grocery list...');
+
+  const meals = S.plan.days.map(d=>`${d.day}: ${(d.meals||[]).map(m=>m.name).join(', ')}`).join('\n');
+  const prompt = `Generate a consolidated weekly grocery list for one person based on these meals.
+
+${meals}
+
+Rules: Never include bananas, cucumbers, cottage cheese, soups. Consolidate duplicates. Realistic quantities. 
+
+Respond ONLY with raw JSON (no markdown):
+{"categories":[{"name":"Proteins","items":[{"name":"Chicken breast","qty":"2.5 lbs"}]}]}
+
+Categories: Proteins, Produce, Grains & Carbs, Dairy & Eggs, Pantry & Condiments, Supplements`;
+
+  try {
+    const data = await callClaude(prompt, 2000);
+    const raw = data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+    S.grocery = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    saveState();
+    renderGrocery(S.grocery);
+  } catch(e) {
+    document.getElementById('gBody').innerHTML = `<div class="note nr"><strong>Error generating list.</strong> ${e.message}</div>`;
+  }
+}
+
+function renderGrocery(list) {
+  document.getElementById('gBody').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:0.15em;color:var(--muted);text-transform:uppercase">Week ${S.currentWeek} · ${list.categories?.reduce((a,c)=>a+c.items.length,0)||0} items</div>
+      <div style="display:flex;gap:6px">
+        <button class="hbtn" onclick="clearChecks()" style="font-size:9px;padding:3px 9px">Clear</button>
+        <button class="hbtn" onclick="copyGrocery()" style="font-size:9px;padding:3px 9px">📋 Copy</button>
+      </div>
+    </div>
+    ${(list.categories||[]).map(cat=>`
+      <div class="gcat">
+        <div class="gcat-ttl">${cat.name}</div>
+        ${(cat.items||[]).map((item,i)=>{
+          const key=`${cat.name}-${i}`;
+          const on=S.checks[key]||false;
+          return `<div class="gitem${on?' done':''}" id="gi-${key}">
+            <div class="gcheck${on?' on':''}" onclick="toggleCheck('${key}')"></div>
+            <span class="gqty">${item.qty}</span>
+            <span>${item.name}</span>
+          </div>`;
+        }).join('')}
+      </div>`).join('')}
+    <button class="hbtn gold" onclick="copyGrocery()" style="width:100%;margin-top:8px">📋 Copy Full List</button>`;
+}
+
+function toggleCheck(key) {
+  S.checks[key] = !S.checks[key];
+  const el = document.getElementById(`gi-${key}`);
+  const ch = el?.querySelector('.gcheck');
+  if (el) el.classList.toggle('done', S.checks[key]);
+  if (ch) ch.classList.toggle('on', S.checks[key]);
+  saveState();
+}
+
+function clearChecks() { S.checks={}; saveState(); renderGrocery(S.grocery); }
+
+function copyGrocery() {
+  if (!S.grocery) return;
+  let t = `WEEK ${S.currentWeek} GROCERY LIST\n\n`;
+  S.grocery.categories.forEach(c => {
+    t += `${c.name.toUpperCase()}\n`;
+    c.items.forEach(i => t += `  □ ${i.qty.padEnd(10)} ${i.name}\n`);
+    t += '\n';
+  });
+  navigator.clipboard.writeText(t).then(()=>toast('Grocery list copied!','ok'));
+}
+
+// ── EMAIL ─────────────────────────────────────────────────────────────────────
+async function openEmail() {
+  document.getElementById('eModal').classList.add('open');
+  document.getElementById('emailTo').value = S.userEmail;
+
+  const cached = S.emailCache[S.currentDay];
+  if (cached) {
+    document.getElementById('emailBody').value = cached;
+    return;
+  }
+
+  document.getElementById('emailBody').value = 'Generating today\'s schedule...';
+  const body = await buildEmailBody(S.currentDay);
+  document.getElementById('emailBody').value = body || 'Could not generate. Check API key and plan.';
+}
+
+function copyEmail() {
+  const body = document.getElementById('emailBody').value;
+  if (!body || body.includes('Generating')) { toast('Wait for generation to complete','err'); return; }
+  navigator.clipboard.writeText(body).then(()=>toast('Copied to clipboard!','ok'));
+}
+
+function openMail() {
+  const to = document.getElementById('emailTo').value.trim();
+  const body = document.getElementById('emailBody').value;
+  if (!to || !to.includes('@')) { toast('Enter your email address first','err'); return; }
+  if (!body || body.includes('Generating')) { toast('Wait for generation to complete','err'); return; }
+
+  // Extract subject if present
+  const lines = body.split('\n');
+  let subject = `Protocol X · ${DAYS[S.currentDay]} Schedule · Week ${S.currentWeek}`;
+  let emailBody = body;
+  if (lines[0].startsWith('SUBJECT:')) {
+    subject = lines[0].replace('SUBJECT:','').trim();
+    emailBody = lines.slice(1).join('\n').trim();
+  }
+
+  navigator.clipboard.writeText(emailBody).then(()=>{
+    toast('Content copied — opening mail app','ok');
+    setTimeout(()=>{
+      window.location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody.substring(0,1500))}`;
+    }, 400);
+  });
+}
+
+// ── DEPLOY ────────────────────────────────────────────────────────────────────
+function openDeploy() {
+  document.getElementById('dModal').classList.add('open');
+}
+
+function copyAppCode() {
+  const html = document.documentElement.outerHTML;
+  navigator.clipboard.writeText(html).then(()=>toast('App HTML copied to clipboard!','ok'));
+}
+
+// ── PHASE / WEEK ──────────────────────────────────────────────────────────────
+function jumpPhase(p, btn) {
+  S.currentPhase = p;
+  S.currentWeek = PHASE_CFG[p].startWk;
+  S.plan = null;
+  S.grocery = null;
+  S.emailCache = {};
+  saveState();
+  document.querySelectorAll('.pbtn').forEach((b,i)=>b.classList.toggle('active',i===p-1));
+  updateProgress();
+  generateWeek();
+}
+
+function weekToPhase(w) {
+  if (w >= 19) return 4;
+  if (w >= 9) return 3;
+  if (w >= 4) return 2;
+  return 1;
+}
+
+function updateProgress() {
+  const w = S.currentWeek;
+  const pct = Math.round((w/28)*100);
+  document.getElementById('progFill').style.width = pct+'%';
+  document.getElementById('progPct').textContent = pct+'%';
+  document.getElementById('progWks').textContent = `Week ${w} of 28`;
+  document.getElementById('weekChip').textContent = `Week ${w} · Phase ${S.currentPhase}`;
+}
+
+// ── CLAUDE API ────────────────────────────────────────────────────────────────
+async function callClaude(prompt, maxTokens=4000) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': S.apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-client-side-allow-unsafe-content': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: maxTokens,
+      messages: [{ role:'user', content: prompt }]
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(()=>({}));
+    throw new Error(err.error?.message || `API error ${res.status}`);
+  }
+  return res.json();
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function setLoading(id, msg='Generating...') {
+  document.getElementById(id).innerHTML = `<div class="loading"><div class="spin"></div><div class="spin-txt">${msg}</div></div>`;
+}
+
+function showErr(id, msg) {
+  if (!msg) { document.getElementById(id).innerHTML=''; return; }
+  document.getElementById(id).innerHTML = `<div class="err-box"><strong>Error</strong>${msg}<br><br>Make sure your API key is correct. You can reset it by clearing localStorage and refreshing.</div>`;
+}
+
+function closeAll() {
+  document.querySelectorAll('.overlay').forEach(o=>o.classList.remove('open'));
+}
+
+function toast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type}`;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3200);
+}
+
+document.querySelectorAll('.overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target===el) el.classList.remove('open'); });
+});
+
+init();
+</script>
+</body>
+</html>
