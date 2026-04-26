@@ -15,6 +15,7 @@ body{background:var(--void);color:var(--text);font-family:'Barlow',sans-serif;fo
 .btns{display:flex;gap:6px;flex-wrap:wrap}
 .btn{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.15em;font-weight:700;text-transform:uppercase;padding:7px 12px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap}
 .btn:hover{border-color:var(--gold);color:var(--gold)}.btn.gold{background:var(--gold);color:var(--void);border-color:var(--gold)}.btn.gold:hover{background:var(--gold2)}.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.active{border-color:var(--gold);color:var(--gold)}
 .pbar{background:var(--deep);border-bottom:1px solid var(--border);padding:7px 16px;display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;align-items:center}.pbar::-webkit-scrollbar{display:none}
 .plbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;white-space:nowrap;margin-right:4px}
 .pbtn{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.15em;font-weight:700;text-transform:uppercase;padding:5px 10px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .15s}.pbtn.on{background:var(--gold);color:var(--void);border-color:var(--gold)}
@@ -33,8 +34,10 @@ body{background:var(--void);color:var(--text);font-family:'Barlow',sans-serif;fo
 .pbody{padding:12px 16px}
 .mc{border:1px solid var(--border);background:var(--surface);margin-bottom:7px;position:relative;overflow:hidden}
 .mc::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--gold)}
+.mc.prep-meal::before{background:var(--ice)}
 .mct{padding:8px 10px 8px 14px;display:flex;justify-content:space-between;align-items:flex-start;gap:6px}
 .mtime{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:1px}
+.mc.prep-meal .mtime{color:var(--ice)}
 .mname{font-size:13px;font-weight:500}
 .mkcal{font-family:'Anton',sans-serif;font-size:16px;color:var(--gold);white-space:nowrap;line-height:1}
 .mkcal small{font-family:'Barlow Condensed',sans-serif;font-size:9px;color:var(--muted);display:block;text-align:right}
@@ -42,6 +45,7 @@ body{background:var(--void);color:var(--text);font-family:'Barlow',sans-serif;fo
 .macs{display:flex;gap:4px;flex-wrap:wrap}
 .mac{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.07em;padding:2px 6px;border:1px solid}
 .mP{border-color:rgba(232,200,74,.3);color:var(--gold)}.mC{border-color:rgba(240,165,0,.3);color:var(--gold2)}.mF{border-color:rgba(126,200,227,.3);color:var(--ice)}
+.prep-tag{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--ice);background:rgba(126,200,227,.1);border:1px solid rgba(126,200,227,.2);padding:2px 7px;display:inline-block;margin-bottom:5px}
 .tots{background:var(--deep);border:1px solid rgba(232,200,74,.12);padding:9px 12px;display:flex;gap:12px;flex-wrap:wrap;margin-top:2px}
 .tot{text-align:center}.tv{font-family:'Anton',sans-serif;font-size:19px;color:var(--gold);display:block;line-height:1}
 .tl{font-family:'Barlow Condensed',sans-serif;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em}
@@ -54,45 +58,66 @@ body{background:var(--void);color:var(--text);font-family:'Barlow',sans-serif;fo
 .wsi span:first-child{font-family:'Anton',sans-serif;font-size:17px;color:var(--gold);display:block;line-height:1}
 .wsi span:last-child{font-family:'Barlow Condensed',sans-serif;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em}
 .rcard{text-align:center;padding:36px 14px}.rw{font-family:'Anton',sans-serif;font-size:56px;color:var(--dim);letter-spacing:.05em}
-.ri{margin-top:14px;display:flex;flex-direction:column;gap:4px;max-width:200px;margin-left:auto;margin-right:auto}
+.ri{margin-top:14px;display:flex;flex-direction:column;gap:4px;max-width:220px;margin-left:auto;margin-right:auto}
 .rit{padding:6px 10px;background:var(--deep);border:1px solid var(--border);font-size:11px;color:var(--muted);text-align:left}
 .load{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:240px;gap:12px}
 .spin{width:30px;height:30px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:sp .8s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .stxt{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
 .ov{position:fixed;inset:0;background:rgba(6,6,8,.94);z-index:500;display:flex;align-items:center;justify-content:center;padding:14px;opacity:0;pointer-events:none;transition:opacity .2s}.ov.open{opacity:1;pointer-events:all}
-.modal{background:var(--surface);border:1px solid var(--border);max-width:520px;width:100%;max-height:85vh;overflow-y:auto}
+.modal{background:var(--surface);border:1px solid var(--border);max-width:560px;width:100%;max-height:88vh;overflow-y:auto}
 .mhd{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--surface);z-index:1}
 .mttl{font-family:'Anton',sans-serif;font-size:17px;letter-spacing:.05em}
 .mx{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:2px 6px}.mx:hover{color:var(--text)}
 .mbd{padding:16px}
-.gcat{margin-bottom:12px}.gcttl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--border);padding-bottom:4px;margin-bottom:6px;font-weight:700}
-.gi{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(42,42,54,.4);font-size:12px}.gi:last-child{border-bottom:none}
-.gc{width:14px;height:14px;border:1px solid var(--border);border-radius:2px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s}
-.gc.on{background:var(--gold);border-color:var(--gold)}.gc.on::after{content:'checkmark';font-size:0;color:transparent;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.5 5l2.5 2.5 4.5-5' stroke='%23060608' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") center/10px no-repeat;width:100%;height:100%;display:block}
-.gq{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--gold2);min-width:52px;font-weight:700}
-.gi.done{text-decoration:line-through;opacity:.35}
-.fl{margin-bottom:12px}.fl label{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px}
+.stabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px}
+.stab{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.15em;text-transform:uppercase;padding:8px 16px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .15s}
+.stab.on{color:var(--gold);border-bottom-color:var(--gold)}
+.spanel{display:none}.spanel.on{display:block}
+.sgroup{margin-bottom:18px}
+.sgroup-title{font-family:'Anton',sans-serif;font-size:14px;letter-spacing:.05em;color:var(--text);margin-bottom:4px}
+.sgroup-sub{font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.5}
+.ing-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.ing-chip{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.1em;padding:5px 12px;border:1px solid var(--border);background:var(--deep);color:var(--muted);cursor:pointer;border-radius:2px;transition:all .15s;user-select:none}
+.ing-chip:hover{border-color:var(--gold);color:var(--gold)}
+.ing-chip.on{background:rgba(232,200,74,.12);border-color:var(--gold);color:var(--gold)}
+.ing-chip.on.prot{background:rgba(232,200,74,.12);border-color:var(--gold);color:var(--gold)}
+.custom-ing{display:flex;gap:6px;margin-top:6px}
 .fi{width:100%;background:var(--deep);border:1px solid var(--border);color:var(--text);padding:9px 11px;font-family:'Barlow',sans-serif;font-size:13px;outline:none;transition:border-color .15s}.fi:focus{border-color:var(--gold)}.fi::placeholder{color:var(--muted)}
-textarea.fi{min-height:150px;resize:vertical;font-size:11px;line-height:1.6}
+textarea.fi{min-height:120px;resize:vertical;font-size:11px;line-height:1.6}
+.fl{margin-bottom:12px}.fl label{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px}
 .note{padding:9px 12px;font-size:11px;line-height:1.6;border-left:3px solid;margin-bottom:10px}
 .ng{border-color:var(--gold);background:rgba(232,200,74,.04);color:#a09050}.ng strong{color:var(--gold)}
+.nblue{border-color:var(--ice);background:rgba(126,200,227,.04);color:#709090}.nblue strong{color:var(--ice)}
+.gcat{margin-bottom:12px}.gcttl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--border);padding-bottom:4px;margin-bottom:6px;font-weight:700}
+.gi{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(42,42,54,.4);font-size:12px}.gi:last-child{border-bottom:none}
+.gc{width:14px;height:14px;border:1px solid var(--border);border-radius:2px;cursor:pointer;flex-shrink:0;transition:all .12s;display:flex;align-items:center;justify-content:center}
+.gc.on{background:var(--gold);border-color:var(--gold)}.gc.on::after{content:'✓';font-size:9px;color:var(--void);font-weight:700}
+.gq{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--gold2);min-width:52px;font-weight:700}
+.gi.done{text-decoration:line-through;opacity:.35}
 .toast{position:fixed;bottom:18px;right:18px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);padding:9px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.1em;color:var(--text);z-index:1000;transform:translateY(50px);opacity:0;transition:all .25s;max-width:260px}
 .toast.show{transform:translateY(0);opacity:1}.toast.err{border-left-color:var(--red)}.toast.ok{border-left-color:var(--green)}
 .ebox{background:rgba(224,50,50,.06);border:1px solid rgba(224,50,50,.2);padding:12px 14px;margin:12px 0;font-size:12px;color:#c08080;line-height:1.7}
 .ebox strong{color:var(--red);display:block;margin-bottom:3px}
+.sunday-prep-banner{background:rgba(126,200,227,.06);border:1px solid rgba(126,200,227,.2);padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--ice);line-height:1.6}
+.sunday-prep-banner strong{display:block;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:3px}
+.prep-section{background:var(--deep);border:1px solid rgba(126,200,227,.15);padding:12px 14px;margin-bottom:10px}
+.prep-section-title{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ice);margin-bottom:8px;font-weight:700}
 </style>
 </head>
 <body>
+
 <div class="hdr">
   <div class="logo">PROTOCOL <span>X</span></div>
-  <div class="chip" id="wchip">Week 1 · Phase 1</div>
+  <div class="chip" id="wchip">Week 1 - Phase 1</div>
   <div class="btns">
+    <button class="btn" onclick="openSettings()">Settings</button>
     <button class="btn" onclick="openGrocery()">Grocery</button>
     <button class="btn" onclick="openEmail()">Email Today</button>
     <button class="btn gold" id="genBtn" onclick="generateWeek()">New Week</button>
   </div>
 </div>
+
 <div class="pbar">
   <span class="plbl">Phase:</span>
   <button class="pbtn on" onclick="jumpPhase(1,this)">1 Adapt</button>
@@ -100,29 +125,160 @@ textarea.fi{min-height:150px;resize:vertical;font-size:11px;line-height:1.6}
   <button class="pbtn" onclick="jumpPhase(3,this)">3 Deep Cut</button>
   <button class="pbtn" onclick="jumpPhase(4,this)">4 Camera Ready</button>
 </div>
+
 <div class="prog">
   <span class="pl">Progress</span>
   <div class="pt"><div class="pf" id="pf" style="width:4%"></div></div>
   <span class="pp" id="pp">4%</span>
   <span class="pl" id="pwk" style="margin-left:4px">Wk 1/28</span>
 </div>
+
 <div class="dnav" id="dnav"></div>
+
 <div class="panels">
   <div class="panel">
-    <div class="phd"><span class="pttl">MEALS</span><span class="pmeta" id="mmeta">—</span></div>
+    <div class="phd"><span class="pttl">MEALS</span><span class="pmeta" id="mmeta">-</span></div>
     <div class="pbody" id="mpanel"><div class="load"><div class="spin"></div><div class="stxt">Ready</div></div></div>
   </div>
   <div class="panel">
-    <div class="phd"><span class="pttl">TRAINING</span><span class="pmeta" id="wmeta">—</span></div>
+    <div class="phd"><span class="pttl">TRAINING</span><span class="pmeta" id="wmeta">-</span></div>
     <div class="pbody" id="wpanel"><div class="load"><div class="spin"></div><div class="stxt">Ready</div></div></div>
   </div>
 </div>
+
+<!-- SETTINGS MODAL -->
+<div class="ov" id="setMod">
+  <div class="modal">
+    <div class="mhd">
+      <span class="mttl">PREFERENCES</span>
+      <button class="mx" onclick="closeAll()">X</button>
+    </div>
+    <div class="mbd">
+      <div class="stabs">
+        <div class="stab on" onclick="switchTab('ingredients')">Ingredients</div>
+        <div class="stab" onclick="switchTab('mealprep')">Meal Prep</div>
+        <div class="stab" onclick="switchTab('profile')">Profile</div>
+      </div>
+
+      <!-- INGREDIENTS TAB -->
+      <div class="spanel on" id="tab-ingredients">
+        <div class="note ng"><strong>How this works:</strong> Select your preferred staples. Claude will build meal plans using these ingredients as the foundation while adding variety. All plans still meet your protein, calorie, and LDL targets.</div>
+
+        <div class="sgroup">
+          <div class="sgroup-title">Proteins</div>
+          <div class="sgroup-sub">Select all you regularly buy. At least 3 recommended.</div>
+          <div class="ing-grid" id="grid-proteins"></div>
+        </div>
+
+        <div class="sgroup">
+          <div class="sgroup-title">Carbs</div>
+          <div class="sgroup-sub">Select your go-to carb sources.</div>
+          <div class="ing-grid" id="grid-carbs"></div>
+        </div>
+
+        <div class="sgroup">
+          <div class="sgroup-title">Vegetables</div>
+          <div class="sgroup-sub">Select what you keep stocked.</div>
+          <div class="ing-grid" id="grid-vegs"></div>
+        </div>
+
+        <div class="sgroup">
+          <div class="sgroup-title">Fats and Flavors</div>
+          <div class="sgroup-sub">Oils, nuts, sauces you cook with regularly.</div>
+          <div class="ing-grid" id="grid-fats"></div>
+        </div>
+
+        <div class="sgroup">
+          <div class="sgroup-title">Add Custom Ingredients</div>
+          <div class="sgroup-sub">Anything not in the lists above.</div>
+          <div class="custom-ing">
+            <input class="fi" id="customIng" placeholder="e.g. edamame, protein bars, kimchi" style="flex:1">
+            <button class="btn gold" onclick="addCustom()">Add</button>
+          </div>
+          <div id="customTags" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
+        </div>
+
+        <button class="btn gold" onclick="saveIngredients()" style="width:100%;margin-top:8px">Save Ingredients</button>
+      </div>
+
+      <!-- MEAL PREP TAB -->
+      <div class="spanel" id="tab-mealprep">
+        <div class="note nblue"><strong>Sunday Meal Prep Mode:</strong> Plans are structured so Sunday is your batch cook day. Prepped items carry through Mon-Thu. Fresh quick meals on Fri-Sat.</div>
+
+        <div class="fl">
+          <label>Household size (people eating from prep)</label>
+          <select class="fi" id="householdSize">
+            <option value="1">Just me</option>
+            <option value="2">2 people</option>
+            <option value="3" selected>3-4 people</option>
+            <option value="5">5 or more</option>
+          </select>
+        </div>
+
+        <div class="fl">
+          <label>Cooking skill level</label>
+          <select class="fi" id="cookingSkill">
+            <option value="basic">Basic - sheet pan and stovetop</option>
+            <option value="intermediate" selected>Intermediate - comfortable with most techniques</option>
+            <option value="advanced">Advanced - happy with complex recipes</option>
+            <option value="minimal">Minimal - need very fast prep</option>
+          </select>
+        </div>
+
+        <div class="fl">
+          <label>Weekday meal structure preference</label>
+          <select class="fi" id="mealStructure">
+            <option value="rotate">2-3 prepped options to rotate through</option>
+            <option value="mix" selected>Mix of prepped and quick 10-min meals</option>
+            <option value="same">Same prepped meal multiple days</option>
+            <option value="fresh">Fresh meals daily, prep on weekends only</option>
+          </select>
+        </div>
+
+        <div class="fl">
+          <label>Sunday prep time available</label>
+          <select class="fi" id="prepTime">
+            <option value="60">About 1 hour</option>
+            <option value="120" selected>1-2 hours</option>
+            <option value="180">2-3 hours</option>
+            <option value="240">3+ hours, full batch cook</option>
+          </select>
+        </div>
+
+        <div class="fl">
+          <label>Any additional dietary notes for your family</label>
+          <textarea class="fi" id="dietNotes" placeholder="e.g. spouse is vegetarian, kids prefer no spice, allergic to shellfish..."></textarea>
+        </div>
+
+        <button class="btn gold" onclick="savePrepSettings()" style="width:100%;margin-top:4px">Save Meal Prep Settings</button>
+      </div>
+
+      <!-- PROFILE TAB -->
+      <div class="spanel" id="tab-profile">
+        <div class="fl">
+          <label>Your Email (for daily schedules)</label>
+          <input class="fi" type="email" id="profileEmail" placeholder="you@example.com">
+        </div>
+        <div class="fl">
+          <label>Current Week (1-28)</label>
+          <input class="fi" type="number" id="profileWeek" min="1" max="28" value="1">
+        </div>
+        <div class="note ng"><strong>Your fixed profile:</strong> Male, 38yo, Portland OR. 194.6lbs. BF 27.8%. LDL 159. Wegovy semaglutide. Target: 159lbs, 12% BF. Dislikes: bananas, cucumbers, cottage cheese, soups. These are permanently baked into all generation prompts.</div>
+        <button class="btn gold" onclick="saveProfile()" style="width:100%;margin-top:4px">Save Profile</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GROCERY MODAL -->
 <div class="ov" id="gMod">
   <div class="modal">
     <div class="mhd"><span class="mttl">GROCERY LIST</span><button class="mx" onclick="closeAll()">X</button></div>
     <div class="mbd" id="gbody"></div>
   </div>
 </div>
+
+<!-- EMAIL MODAL -->
 <div class="ov" id="eMod">
   <div class="modal">
     <div class="mhd"><span class="mttl">TODAY SCHEDULE</span><button class="mx" onclick="closeAll()">X</button></div>
@@ -137,101 +293,235 @@ textarea.fi{min-height:150px;resize:vertical;font-size:11px;line-height:1.6}
     </div>
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
+
 <script>
+// ── INGREDIENT CATALOG ────────────────────────────────────────────────────────
+const CATALOG = {
+  proteins: ['Chicken breast','Salmon','Turkey breast','Shrimp','Egg whites','Tuna','Sardines','Ground turkey','Cod','Tilapia','Greek yogurt','Whey protein','Edamame'],
+  carbs: ['Brown rice','White rice','Oat bran','Rolled oats','Sweet potato','Quinoa','Farro','Lentils','Chickpeas','Ezekiel bread','Rice cakes','Pasta','Black beans'],
+  vegs: ['Broccoli','Spinach','Bell peppers','Zucchini','Asparagus','Cherry tomatoes','Kale','Arugula','Mushrooms','Green beans','Bok choy','Brussels sprouts','Cauliflower','Onion','Garlic'],
+  fats: ['Olive oil','Avocado','Almonds','Walnuts','Almond butter','Peanut butter','Flaxseed','Chia seeds','Feta cheese','Hummus']
+};
+
 const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const DS=['MON','TUE','WED','THU','FRI','SAT','SUN'];
 const DT=['Push','HIIT','Pull','HIIT','Legs','Full Body','Rest'];
 const PC={
-  1:{label:'Adapt',sw:1,cal:'1600-1750',prot:'180g',note:'No HIIT. Zone 2 cardio only. Semaglutide adaptation.'},
-  2:{label:'Accel',sw:4,cal:'1400-1550',prot:'180g',note:'HIIT 2x per week. 6 training days.'},
-  3:{label:'Cut',sw:9,cal:'1350-1500',prot:'185g',note:'HIIT 3x per week. Peak training volume.'},
+  1:{label:'Adapt',sw:1,cal:'1600-1750',prot:'180g',note:'No HIIT. Zone 2 cardio only. Semaglutide adaptation phase.'},
+  2:{label:'Accel',sw:4,cal:'1400-1550',prot:'180g',note:'HIIT 2x per week. 6 training days. Aggressive deficit.'},
+  3:{label:'Cut',sw:9,cal:'1350-1500',prot:'185g',note:'HIIT 3x per week. Peak training volume. Deep cut.'},
   4:{label:'Final',sw:19,cal:'1300-1500',prot:'190g',note:'HIIT 3x per week. Final cut. Camera ready.'}
 };
-let S={w:1,ph:1,day:0,plan:null,groc:null,checks:{},ecache:{},email:''};
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+const DEF_PREFS = {
+  proteins: ['Chicken breast','Salmon','Turkey breast','Shrimp','Egg whites','Greek yogurt','Whey protein'],
+  carbs: ['Brown rice','Oat bran','Sweet potato','Quinoa'],
+  vegs: ['Broccoli','Spinach','Bell peppers','Zucchini','Asparagus','Cherry tomatoes'],
+  fats: ['Olive oil','Avocado','Almonds','Walnuts'],
+  custom: [],
+  household: '3',
+  cookingSkill: 'intermediate',
+  mealStructure: 'mix',
+  prepTime: '120',
+  dietNotes: ''
+};
+
+let S={
+  w:1, ph:1, day:0,
+  plan:null, groc:null, checks:{}, ecache:{}, email:'',
+  prefs: {...DEF_PREFS}
+};
 
 function init(){
-  try{const d=JSON.parse(localStorage.getItem('px')||'{}');S.w=d.w||1;S.ph=d.ph||1;S.plan=d.plan||null;S.groc=d.groc||null;S.checks=d.checks||{};S.email=d.email||'';}catch(e){}
-  if(S.email)document.getElementById('eTo').value=S.email;
-  buildNav();updateProg();
-  if(S.plan){renderDay(S.day);setTimeout(()=>genEmail(S.day),1500);}
+  try{
+    const d=JSON.parse(localStorage.getItem('px')||'{}');
+    S.w=d.w||1; S.ph=d.ph||1;
+    S.plan=d.plan||null; S.groc=d.groc||null;
+    S.checks=d.checks||{}; S.email=d.email||'';
+    S.prefs=Object.assign({...DEF_PREFS}, d.prefs||{});
+  }catch(e){}
+  if(S.email) document.getElementById('eTo').value=S.email;
+  buildNav(); updateProg(); buildIngredientGrids();
+  loadSettingsUI();
+  if(S.plan){renderDay(S.day); setTimeout(()=>genEmail(S.day),1500);}
   else generateWeek();
 }
 
-function save(){try{localStorage.setItem('px',JSON.stringify({w:S.w,ph:S.ph,plan:S.plan,groc:S.groc,checks:S.checks,email:S.email}));}catch(e){}}
+function save(){
+  try{localStorage.setItem('px',JSON.stringify({w:S.w,ph:S.ph,plan:S.plan,groc:S.groc,checks:S.checks,email:S.email,prefs:S.prefs}));}catch(e){}
+}
+
+// ── INGREDIENT UI ─────────────────────────────────────────────────────────────
+function buildIngredientGrids(){
+  ['proteins','carbs','vegs','fats'].forEach(cat=>{
+    const grid=document.getElementById('grid-'+cat);
+    if(!grid)return;
+    grid.innerHTML=CATALOG[cat].map(ing=>`
+      <div class="ing-chip${S.prefs[cat].includes(ing)?' on':''}" onclick="toggleIng('${cat}','${ing}',this)">${ing}</div>
+    `).join('');
+  });
+  renderCustomTags();
+}
+
+function toggleIng(cat, ing, el){
+  const arr=S.prefs[cat];
+  const idx=arr.indexOf(ing);
+  if(idx===-1){arr.push(ing);el.classList.add('on');}
+  else{arr.splice(idx,1);el.classList.remove('on');}
+}
+
+function addCustom(){
+  const inp=document.getElementById('customIng');
+  const val=inp.value.trim();
+  if(!val)return;
+  const items=val.split(',').map(s=>s.trim()).filter(Boolean);
+  items.forEach(item=>{if(!S.prefs.custom.includes(item))S.prefs.custom.push(item);});
+  inp.value='';
+  renderCustomTags();
+}
+
+function renderCustomTags(){
+  const el=document.getElementById('customTags');
+  if(!el)return;
+  el.innerHTML=S.prefs.custom.map((c,i)=>`
+    <div class="ing-chip on" style="display:flex;align-items:center;gap:6px">
+      ${c}
+      <span onclick="removeCustom(${i})" style="cursor:pointer;opacity:.6;font-size:11px">x</span>
+    </div>`).join('');
+}
+
+function removeCustom(i){S.prefs.custom.splice(i,1);renderCustomTags();}
+
+function saveIngredients(){
+  save();
+  toast('Ingredients saved - generate New Week to apply','ok');
+  closeAll();
+}
+
+function loadSettingsUI(){
+  document.getElementById('householdSize').value=S.prefs.household||'3';
+  document.getElementById('cookingSkill').value=S.prefs.cookingSkill||'intermediate';
+  document.getElementById('mealStructure').value=S.prefs.mealStructure||'mix';
+  document.getElementById('prepTime').value=S.prefs.prepTime||'120';
+  document.getElementById('dietNotes').value=S.prefs.dietNotes||'';
+  document.getElementById('profileEmail').value=S.email||'';
+  document.getElementById('profileWeek').value=S.w||1;
+}
+
+function savePrepSettings(){
+  S.prefs.household=document.getElementById('householdSize').value;
+  S.prefs.cookingSkill=document.getElementById('cookingSkill').value;
+  S.prefs.mealStructure=document.getElementById('mealStructure').value;
+  S.prefs.prepTime=document.getElementById('prepTime').value;
+  S.prefs.dietNotes=document.getElementById('dietNotes').value;
+  save();
+  toast('Meal prep settings saved','ok');
+  closeAll();
+}
+
+function saveProfile(){
+  S.email=document.getElementById('profileEmail').value;
+  S.w=parseInt(document.getElementById('profileWeek').value)||1;
+  S.ph=weekToPhase(S.w);
+  document.getElementById('eTo').value=S.email;
+  save(); updateProg();
+  toast('Profile saved','ok');
+  closeAll();
+}
+
+function weekToPhase(w){return w>=19?4:w>=9?3:w>=4?2:1;}
+
+function switchTab(name){
+  document.querySelectorAll('.stab').forEach((t,i)=>t.classList.toggle('on',['ingredients','mealprep','profile'][i]===name));
+  document.querySelectorAll('.spanel').forEach(p=>p.classList.remove('on'));
+  document.getElementById('tab-'+name).classList.add('on');
+}
+
+// ── INGREDIENT SUMMARY FOR PROMPTS ────────────────────────────────────────────
+function getIngredientContext(){
+  const p=S.prefs;
+  const all=[
+    ...p.proteins.map(i=>`${i} (protein)`),
+    ...p.carbs.map(i=>`${i} (carb)`),
+    ...p.vegs.map(i=>`${i} (vegetable)`),
+    ...p.fats.map(i=>`${i} (fat/flavor)`),
+    ...p.custom.map(i=>`${i}`)
+  ];
+  const skillMap={basic:'simple sheet pan and stovetop recipes',intermediate:'intermediate cooking techniques',advanced:'complex multi-step recipes',minimal:'very quick 5-10 minute prep'};
+  const structMap={rotate:'rotate through 2-3 different prepped options each day',mix:'mix of prepped items and quick fresh meals',same:'the same prepped meal repeated across multiple days',fresh:'mostly fresh daily meals'};
+
+  return `PREFERRED INGREDIENTS (use these as foundation, add variety where helpful):
+${all.join(', ')}
+
+COOKING CONTEXT:
+- Family size: ${p.household} people eating from Sunday meal prep
+- Skill level: ${skillMap[p.cookingSkill]||'intermediate'}
+- Weekday structure: ${structMap[p.mealStructure]||'mix of prepped and fresh'}
+- Sunday prep time available: ${p.prepTime} minutes
+${p.dietNotes?'- Family dietary notes: '+p.dietNotes:''}
+
+MEAL PREP RULES:
+- Sunday is batch cook day. Generate a PREP PLAN for Sunday showing what to cook in bulk.
+- Meals tagged as PREP should be batch-cooked Sunday and eaten Mon-Thu.
+- Friday and Saturday get fresh quick meals.
+- Scale prep quantities for ${p.household} people.`;
+}
 
 function buildNav(){
-  document.getElementById('dnav').innerHTML=DAYS.map((d,i)=>`<div class="dtab${i===S.day?' on':''}" onclick="selDay(${i})"><span class="dn">${DS[i]}</span><span class="dt2">${DT[i]}</span></div>`).join('');
+  document.getElementById('dnav').innerHTML=DAYS.map((d,i)=>`
+    <div class="dtab${i===S.day?' on':''}" onclick="selDay(${i})">
+      <span class="dn">${DS[i]}</span><span class="dt2">${DT[i]}</span>
+    </div>`).join('');
 }
 
 function selDay(i){S.day=i;document.querySelectorAll('.dtab').forEach((t,j)=>t.classList.toggle('on',j===i));renderDay(i);}
 
-// ── PLAN GENERATION ───────────────────────────────────────────────────────────
-// Uses a simple pipe-delimited text format to avoid JSON parse errors entirely
+// ── GENERATE ──────────────────────────────────────────────────────────────────
+function makeMealPrompt(dayName, isRefeed, isRest, cfg){
+  const ingCtx=getIngredientContext();
+  const calTarget=isRefeed?'1900-2000':isRest?'1100-1300':cfg.cal;
+  const dayNote=isRefeed?'REFEED DAY: Higher carbs, ~1900-2000 calories total. Can be more relaxed with food choices.':
+    isRest?'REST DAY: Light meals, lower calories ~1100-1300. Simple easy food.':
+    dayName==='Monday'||dayName==='Wednesday'||dayName==='Friday'?'TRAINING DAY: Higher carbs to fuel workout. Protein at every meal.':
+    'CARDIO/HIIT DAY: Moderate carbs. Keep it lean and clean.';
+  const prepNote=(dayName==='Monday'||dayName==='Tuesday'||dayName==='Wednesday'||dayName==='Thursday')?
+    'IMPORTANT: Where possible use items that were batch-prepped on Sunday. Mark these meals with PREP at the start of the description.':'';
 
-function makeDayPrompt(dayName, dayNum, w, ph, cfg) {
-  const isRefeed = dayName==='Saturday';
-  const isRest = dayName==='Sunday';
-  const calTarget = isRefeed?'1900-2000':isRest?'1100-1300':cfg.cal;
+  return `Generate a meal plan for ${dayName} of a Hollywood fitness transformation protocol.
 
-  const workoutGuide = {
-    'Monday':'Push Day: Barbell Bench Press 4x6 @ 125-135lbs rest 120s, Overhead Press 3x8 @ 75-85lbs rest 90s, Incline DB Press 3x10 @ 55-65lbs rest 75s, Cable Lateral Raises 3x15 @ 15-20lbs rest 45s, Tricep Pushdown 3x12 @ 45-55lbs rest 60s, Ab Wheel 3x10',
-    'Tuesday': ph===1?'Zone 2 Walk 40 min HR 120-135':'HIIT Day: Treadmill Sprints 10x30s on 90s off, Cable Crunches 3x15 @ 50lbs, Hanging Leg Raises 3x12, Plank 3x45s',
-    'Wednesday':'Pull Day: Deadlift 4x5 @ 155-175lbs rest 180s, Pull-Ups or Lat Pulldown 4x8 @ 110lbs rest 90s, Seated Cable Row 3x10 @ 100-120lbs rest 75s, Face Pulls 3x15 @ 30lbs rest 45s, Barbell Curl 3x10 @ 65lbs rest 60s, Hammer Curl 2x12 @ 30lbs',
-    'Thursday': ph===1?'Zone 2 Walk 40 min HR 120-135':'HIIT Day: Assault Bike 8x20s on 100s off, Bicycle Crunches 3x20, Dead Bugs 3x12, Side Plank 3x30s each',
-    'Friday':'Legs Day: Back Squat 4x6 @ 135-155lbs rest 180s, Romanian Deadlift 3x10 @ 105-125lbs rest 90s, Leg Press 3x12 @ 180-220lbs rest 75s, Walking Lunges 3x12 @ 30lbs rest 60s, Leg Curl 3x12 @ 55lbs rest 60s, Calf Raises 4x20',
-    'Saturday':'Full Body Circuit: Goblet Squat 4x12 @ 35lbs, Push-Ups 4x15, DB Row 4x12 @ 40lbs, Hip Thrust 4x15, Mountain Climbers 4x30s',
-    'Sunday':'REST'
-  }[dayName]||'Rest Day';
+PERSON: Male 38yo. Wegovy semaglutide - take pill on waking wait 30 min before eating.
+CALORIES: ${calTarget} per day. PROTEIN: ${cfg.prot} minimum.
+FIXED RULES: Never use bananas, cucumbers, cottage cheese, or soups. Prioritize salmon for LDL management.
+${dayNote}
+${prepNote}
 
-  return `Generate a meal plan for ${dayName} of a Hollywood transformation protocol.
+${ingCtx}
 
-PERSON: Male 38 years old. Goal: lose fat, get visible abs. On Wegovy semaglutide (take pill on waking, wait 30 min before eating).
-CALORIES: ${calTarget} per day. PROTEIN TARGET: ${cfg.prot} minimum.
-RULES: Never include bananas, cucumbers, cottage cheese, or soups. Use lean proteins: chicken breast, turkey, fish, egg whites, shrimp, Greek yogurt, whey protein. Include salmon this day if possible. Oat bran preferred for breakfast. Red meat max 2x per week total.
-${isRefeed?'TODAY IS REFEED DAY: Higher carbs, around 1900-2000 calories total.':''}
-${isRest?'TODAY IS REST DAY: Light meals only, lower calories around 1100-1300.':''}
+Output EXACTLY 5 meals, one per line, pipe-delimited, nothing else:
+TIME|LABEL|NAME|DESCRIPTION|PROTEIN_G|CARBS_G|FAT_G|CALORIES
 
-Output EXACTLY 5 meals in this pipe format, one per line, nothing else:
-TIME|LABEL|NAME|DESCRIPTION|PROTEIN|CARBS|FAT|CALORIES
+Example:
+07:30|Breakfast|Oat Bran Protein Bowl|PREP: Batch-cooked oat bran with whey protein and blueberries|38|42|6|375
 
-Example line:
-07:30|Breakfast|Oat Bran Bowl|Half cup oat bran with whey protein and blueberries|38|42|6|375
-
-Output only the 5 data lines. No headers. No extra text. No JSON.`;
+Numbers must be integers. Output only 5 data lines. No headers. No JSON. No extra text.`;
 }
 
-function parseMealLine(line) {
-  const parts = line.split('|');
-  if (parts.length < 8) return null;
-  return {
-    time: parts[0].trim(),
-    label: parts[1].trim(),
-    name: parts[2].trim(),
-    desc: parts[3].trim(),
-    protein: parseInt(parts[4])||0,
-    carbs: parseInt(parts[5])||0,
-    fat: parseInt(parts[6])||0,
-    calories: parseInt(parts[7])||0
-  };
-}
-
-function makeWorkoutPrompt(dayName, ph, w) {
-  const workouts = {
-    'Monday':`Push Day chest shoulders triceps. Week ${w} so weights should reflect ${w} weeks of training for a 38yo male starting at 194lbs.`,
-    'Tuesday': ph===1?'Zone 2 cardio day. 40 minute walk or light cycling at conversational pace HR 120-135.':'HIIT and abs day.',
-    'Wednesday':`Pull Day back and biceps. Week ${w}.`,
-    'Thursday': ph===1?'Zone 2 cardio day. 40 minute walk or light cycling.':'HIIT and core day.',
-    'Friday':`Legs day squats deadlifts. Most important session of the week. Week ${w}.`,
-    'Saturday':'Full body circuit training. Moderate intensity.',
-    'Sunday':'REST DAY'
-  };
-
+function makeWorkoutPrompt(dayName, ph, w){
   if(dayName==='Sunday') return null;
+  const workouts={
+    'Monday':`Push Day chest shoulders triceps. Progressive weights for week ${w} of training.`,
+    'Tuesday':ph===1?'Zone 2 cardio. 40 min walk or light cycling HR 120-135.':'HIIT and abs. Sprint intervals plus core circuit.',
+    'Wednesday':`Pull Day back and biceps. Progressive weights for week ${w}.`,
+    'Thursday':ph===1?'Zone 2 cardio. 40 min walk or light cycling.':'HIIT and core. Different cardio modality from Tuesday.',
+    'Friday':`Legs day. Squats, deadlifts, accessories. Most important session. Week ${w}.`,
+    'Saturday':'Full body circuit. Moderate intensity. Peripheral heart action style.',
+  };
+  return `Generate a ${dayName} workout: ${workouts[dayName]||'Rest'}
 
-  return `Generate a workout for ${dayName}: ${workouts[dayName]||'Rest day'}
-
-Output EXACTLY in this format, sections separated by ### and exercises one per line with pipe delimiter:
+Output in this exact format:
 WORKOUT_TYPE|DURATION_MINUTES|CALORIES_BURNED
 ###
 SECTION_NAME
@@ -242,164 +532,222 @@ Push Day - Chest and Shoulders|65|340
 ###
 Main Compounds
 Barbell Bench Press|4x6|125-135 lbs|120|Keep elbows at 75 degrees
-Overhead Press|3x8|75-85 lbs|90|Brace core
 
-Output only the data. No extra text. No JSON.`;
+Only data lines. No JSON. No extra text.`;
 }
 
-function parseWorkoutText(text) {
-  if(!text||text.includes('REST DAY')) return null;
-  const lines = text.trim().split('\n').map(l=>l.trim()).filter(l=>l);
-  if(!lines.length) return null;
+function makeSundayPrepPlan(cfg){
+  const ingCtx=getIngredientContext();
+  return `Generate a Sunday batch meal prep plan for a Hollywood fitness client.
 
-  const header = lines[0].split('|');
-  const wo = {
-    type: header[0]||'Training',
-    duration: (header[1]||'60')+' min',
-    calories: parseInt(header[2])||300,
-    sections: []
-  };
+GOAL: Prep enough food for ${S.prefs.household} people for Mon-Thu.
+PROTEIN TARGET per person: ${cfg.prot} per day.
+AVAILABLE PREP TIME: ${S.prefs.prepTime} minutes.
+SKILL LEVEL: ${S.prefs.cookingSkill}.
 
-  let currentSection = null;
+${ingCtx}
+
+Output a prep plan in this format, sections separated by ---:
+ITEM_NAME|QUANTITY|COOK_METHOD|COOK_TIME_MINS|STORAGE_DAYS
+---
+TIPS
+tip 1
+tip 2
+
+Example:
+Grilled Chicken Breast|3 lbs|Oven 400F|25|5 days fridge
+Brown Rice|4 cups dry|Rice cooker|30|5 days fridge
+---
+TIPS
+Store proteins and carbs separately in containers
+Label everything with day of week
+
+Only data lines and tips. No JSON. No extra text.`;
+}
+
+function parseMealLine(line){
+  const p=line.split('|');
+  if(p.length<8)return null;
+  return{time:p[0].trim(),label:p[1].trim(),name:p[2].trim(),desc:p[3].trim(),protein:parseInt(p[4])||0,carbs:parseInt(p[5])||0,fat:parseInt(p[6])||0,calories:parseInt(p[7])||0};
+}
+
+function parseWorkoutText(text){
+  if(!text||text.trim().toUpperCase().includes('REST DAY'))return null;
+  const lines=text.trim().split('\n').map(l=>l.trim()).filter(Boolean);
+  if(!lines.length)return null;
+  const hdr=lines[0].split('|');
+  const wo={type:hdr[0]||'Training',duration:(hdr[1]||'60')+' min',calories:parseInt(hdr[2])||300,sections:[]};
+  let cur=null;
   for(let i=1;i<lines.length;i++){
     const l=lines[i];
-    if(l==='###'){currentSection=null;continue;}
-    if(!l.includes('|')){
-      currentSection={label:l,exercises:[]};
-      wo.sections.push(currentSection);
-      continue;
-    }
-    if(currentSection){
-      const p=l.split('|');
-      currentSection.exercises.push({
-        name:p[0]||'',
-        sets:p[1]||'',
-        weight:p[2]||'',
-        rest:p[3]?p[3]+'s':'',
-        note:p[4]||''
-      });
-    }
+    if(l==='###'){cur=null;continue;}
+    if(!l.includes('|')){cur={label:l,exercises:[]};wo.sections.push(cur);continue;}
+    if(cur){const p=l.split('|');cur.exercises.push({name:p[0]||'',sets:p[1]||'',weight:p[2]||'',rest:p[3]?p[3]+'s':'',note:p[4]||''});}
   }
   return wo;
 }
 
+function parsePrepPlan(text){
+  if(!text)return null;
+  const parts=text.split('---');
+  const items=[];
+  const tips=[];
+  (parts[0]||'').split('\n').forEach(line=>{
+    const p=line.trim().split('|');
+    if(p.length>=5)items.push({name:p[0].trim(),qty:p[1].trim(),method:p[2].trim(),time:p[3].trim(),storage:p[4].trim()});
+  });
+  if(parts[1]){
+    parts[1].split('\n').forEach(line=>{
+      const l=line.trim();
+      if(l&&l.toLowerCase()!=='tips')tips.push(l);
+    });
+  }
+  return{items,tips};
+}
+
 async function generateWeek(){
   const btn=document.getElementById('genBtn');
-  btn.disabled=true;
-  S.groc=null;S.ecache={};
-  const p=S.ph,w=S.w,cfg=PC[p];
+  btn.disabled=true; S.groc=null; S.ecache={};
+  const p=S.ph, w=S.w, cfg=PC[p];
   const days=[];
 
-  const dayGroups=[[0,1,2,3],[4,5,6]];
-  const labels=['Mon-Thu','Fri-Sun'];
-
   try{
+    // Generate Sunday prep plan first so it informs the week
+    btn.textContent='Planning Sunday prep...';
+    setLoad('mpanel','Planning Sunday meal prep...'); setLoad('wpanel','Planning Sunday meal prep...');
+    const prepRaw=await callAPI(makeSundayPrepPlan(cfg),800);
+    const prepPlan=parsePrepPlan(prepRaw);
+
+    // Generate each day
+    const dayGroups=[[0,1,2,3],[4,5,6]];
+    const labels=['Mon-Thu','Fri-Sun'];
     for(let g=0;g<2;g++){
       btn.textContent='Generating '+labels[g]+'...';
-      setLoad('mpanel','Generating meals '+labels[g]+'...');
-      setLoad('wpanel','Generating workouts '+labels[g]+'...');
-
+      setLoad('mpanel','Generating meals '+labels[g]+'...'); setLoad('wpanel','Generating workouts '+labels[g]+'...');
       for(let di of dayGroups[g]){
         const dayName=DAYS[di];
+        const isRefeed=dayName==='Saturday';
+        const isRest=dayName==='Sunday';
 
-        // Generate meals
-        const mealPrompt=makeDayPrompt(dayName,di,w,p,cfg);
-        const mealRaw=await callAPI(mealPrompt,600);
+        // Meals
+        const mealRaw=await callAPI(makeMealPrompt(dayName,isRefeed,isRest,cfg),700);
         const mealLines=mealRaw.trim().split('\n').filter(l=>l.includes('|'));
         const meals=mealLines.map(parseMealLine).filter(Boolean);
-
-        // Calculate totals
         const totalProtein=meals.reduce((a,m)=>a+m.protein,0);
         const totalCarbs=meals.reduce((a,m)=>a+m.carbs,0);
         const totalFat=meals.reduce((a,m)=>a+m.fat,0);
         const totalCalories=meals.reduce((a,m)=>a+m.calories,0);
 
-        // Generate workout
-        const woPrompt=makeWorkoutPrompt(dayName,p,w);
+        // Workout
+        const woPr=makeWorkoutPrompt(dayName,p,w);
         let workout=null;
-        if(woPrompt){
-          const woRaw=await callAPI(woPrompt,800);
-          workout=parseWorkoutText(woRaw);
-        }
+        if(woPr){const woRaw=await callAPI(woPr,800);workout=parseWorkoutText(woRaw);}
 
-        days.push({day:dayName,type:DT[di],meals,totalProtein,totalCarbs,totalFat,totalCalories,workout});
+        days.push({day:dayName,type:DT[di],meals,totalProtein,totalCarbs,totalFat,totalCalories,workout,prepPlan:isRest?prepPlan:null});
       }
     }
 
     S.plan={w,ph:p,days};
-    save();updateProg();renderDay(S.day);
+    save(); updateProg(); renderDay(S.day);
     toast('Week '+w+' ready','ok');
     setTimeout(()=>genEmail(S.day),2000);
   }catch(e){
     showErr('mpanel',e.message);
     document.getElementById('wpanel').innerHTML='';
-    toast('Failed','err');
+    toast('Failed - try again','err');
   }
-  btn.disabled=false;btn.textContent='New Week';
+  btn.disabled=false; btn.textContent='New Week';
 }
 
-// ── EMAIL ──────────────────────────────────────────────────────────────────────
+// ── EMAIL ─────────────────────────────────────────────────────────────────────
 async function genEmail(idx){
-  if(!S.plan||S.ecache[idx]) return S.ecache[idx]||'';
-  const day=S.plan.days[idx];if(!day)return'';
-  const meals=(day.meals||[]).map(m=>`${m.time} ${m.label}: ${m.name} - P:${m.protein}g C:${m.carbs}g F:${m.fat}g ${m.calories}cal`).join('\n');
+  if(!S.plan||S.ecache[idx])return S.ecache[idx]||'';
+  const day=S.plan.days[idx]; if(!day)return'';
+  const meals=(day.meals||[]).map(m=>`${m.time} ${m.label}: ${m.name} P:${m.protein}g C:${m.carbs}g F:${m.fat}g ${m.calories}cal`).join('\n');
   const wo=day.workout;
   const exText=wo?wo.sections.map(s=>s.label+':\n'+s.exercises.map(e=>`  ${e.name} ${e.sets} @ ${e.weight}`).join('\n')).join('\n'):'Rest day';
-  const prompt=`Write a short motivational daily schedule for a Hollywood fitness client. Plain text only, no special characters.
-
-First line must be exactly: SUBJECT: Protocol X - ${day.day} Week ${S.w}
-
-Then write:
-- Wegovy pill reminder: take on waking, wait 30 min before eating
-- Meals section with all ${day.meals.length} meals
-- Workout section
-- Daily totals: ${day.totalCalories} calories, ${day.totalProtein}g protein
-
-Keep it under 300 words. Be direct and motivational.
-
-Meals data:
-${meals}
-
-Workout: ${wo?wo.type+' '+wo.duration:'Rest day'}
-${exText}`;
-  try{
-    const txt=await callAPI(prompt,600);
-    S.ecache[idx]=txt;return txt;
-  }catch(e){return'';}
+  const prompt=`Write a short motivational daily schedule for a Hollywood fitness client. Plain text only.
+First line must be: SUBJECT: Protocol X - ${day.day} Week ${S.w}
+Include Wegovy pill reminder, all meals, workout, totals: ${day.totalCalories}cal ${day.totalProtein}g protein.
+Under 300 words. Direct and motivational.
+Meals: ${meals}
+Workout: ${wo?wo.type+' '+wo.duration:'Rest'}\n${exText}`;
+  try{const txt=await callAPI(prompt,600);S.ecache[idx]=txt;return txt;}catch(e){return'';}
 }
 
-// ── RENDER ──────────────────────────────────────────────────────────────────────
+// ── RENDER ────────────────────────────────────────────────────────────────────
 function renderDay(idx){
   if(!S.plan)return;
-  const day=S.plan.days[idx];if(!day)return;
+  const day=S.plan.days[idx]; if(!day)return;
   document.getElementById('mmeta').textContent=`${day.totalCalories||0}cal - ${day.totalProtein||0}g P`;
   document.getElementById('wmeta').textContent=day.workout?day.workout.duration:'Rest';
-  renderMeals(day);renderWorkout(day);
+  renderMeals(day); renderWorkout(day);
 }
 
 function renderMeals(day){
   const p=document.getElementById('mpanel');
-  if(!day.meals||!day.meals.length){
-    p.innerHTML='<div class="rcard"><div class="rw">REST</div><p style="color:var(--muted);font-size:12px;margin-top:8px">Light meals today. Prioritize protein.</p></div>';
+  if(!day.meals||!day.meals.length){p.innerHTML='<div class="rcard"><div class="rw">REST</div><p style="color:var(--muted);font-size:12px;margin-top:8px">Light meals today.</p></div>';return;}
+
+  // Sunday gets special prep plan display
+  if(day.day==='Sunday'&&day.prepPlan){
+    let prepHtml='<div class="sunday-prep-banner"><strong>Sunday Meal Prep Plan</strong>Batch cook these items today for Mon-Thu. Approx '+S.prefs.prepTime+' min total.</div>';
+    if(day.prepPlan.items.length){
+      prepHtml+='<div class="prep-section"><div class="prep-section-title">What to cook</div>';
+      prepHtml+=day.prepPlan.items.map(item=>`
+        <div style="display:grid;grid-template-columns:1fr auto;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)">
+          <div><div style="font-size:13px;font-weight:500">${item.name}</div><div style="font-size:11px;color:var(--muted)">${item.method} - ${item.time} min - ${item.storage}</div></div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--ice);font-weight:700;white-space:nowrap">${item.qty}</div>
+        </div>`).join('');
+      prepHtml+='</div>';
+    }
+    if(day.prepPlan.tips.length){
+      prepHtml+='<div class="prep-section" style="margin-top:8px"><div class="prep-section-title">Prep tips</div>';
+      prepHtml+=day.prepPlan.tips.map(t=>`<div style="font-size:11px;color:var(--muted);padding:4px 0">- ${t}</div>`).join('');
+      prepHtml+='</div>';
+    }
+    p.innerHTML=prepHtml+day.meals.map(renderMealCard).join('')+renderTotals(day);
     return;
   }
-  p.innerHTML=day.meals.map(m=>`<div class="mc"><div class="mct"><div><span class="mtime">${m.time} - ${m.label}</span><div class="mname">${m.name}</div></div><div class="mkcal">${m.calories}<small>cal</small></div></div><div class="mcb"><div class="mdesc">${m.desc}</div><div class="macs"><span class="mac mP">P:${m.protein}g</span><span class="mac mC">C:${m.carbs}g</span><span class="mac mF">F:${m.fat}g</span></div></div></div>`).join('')
-  +`<div class="tots"><div class="tot"><span class="tv">${day.totalProtein}g</span><span class="tl">Protein</span></div><div class="tot"><span class="tv">${day.totalCarbs}g</span><span class="tl">Carbs</span></div><div class="tot"><span class="tv">${day.totalFat}g</span><span class="tl">Fat</span></div><div class="tot"><span class="tv">${day.totalCalories}</span><span class="tl">Cal</span></div></div>`;
+
+  p.innerHTML=day.meals.map(renderMealCard).join('')+renderTotals(day);
+}
+
+function renderMealCard(m){
+  const isPrep=m.desc&&m.desc.toUpperCase().startsWith('PREP');
+  const desc=isPrep?m.desc.replace(/^PREP:\s*/i,''):m.desc;
+  return`<div class="mc${isPrep?' prep-meal':''}">
+    <div class="mct">
+      <div>
+        <span class="mtime">${m.time} - ${m.label}</span>
+        <div class="mname">${m.name}</div>
+      </div>
+      <div class="mkcal">${m.calories}<small>cal</small></div>
+    </div>
+    <div class="mcb">
+      ${isPrep?'<div class="prep-tag">Meal Prepped</div>':''}
+      <div class="mdesc">${desc}</div>
+      <div class="macs"><span class="mac mP">P:${m.protein}g</span><span class="mac mC">C:${m.carbs}g</span><span class="mac mF">F:${m.fat}g</span></div>
+    </div>
+  </div>`;
+}
+
+function renderTotals(day){
+  return`<div class="tots"><div class="tot"><span class="tv">${day.totalProtein}g</span><span class="tl">Protein</span></div><div class="tot"><span class="tv">${day.totalCarbs}g</span><span class="tl">Carbs</span></div><div class="tot"><span class="tv">${day.totalFat}g</span><span class="tl">Fat</span></div><div class="tot"><span class="tv">${day.totalCalories}</span><span class="tl">Cal</span></div></div>`;
 }
 
 function renderWorkout(day){
   const p=document.getElementById('wpanel');
   if(!day.workout){
-    p.innerHTML='<div class="rcard"><div class="rw">REST</div><div class="ri"><div class="rit">Take Wegovy on waking</div><div class="rit">30-min walk max</div><div class="rit">Meal prep Mon-Wed</div><div class="rit">Weekly weigh-in</div><div class="rit">8+ hours sleep</div></div></div>';
+    p.innerHTML='<div class="rcard"><div class="rw">REST</div><div class="ri"><div class="rit">Take Wegovy on waking</div><div class="rit">30-min walk max</div><div class="rit">Meal prep today (Sunday)</div><div class="rit">Weekly weigh-in</div><div class="rit">8+ hours sleep</div></div></div>';
     return;
   }
   const wo=day.workout;
-  p.innerHTML=`<div style="font-family:Anton,sans-serif;font-size:16px;letter-spacing:.05em;margin-bottom:10px">${wo.type}</div>`
-  +(wo.sections||[]).map(s=>`<div class="exs"><div class="exsl">${s.label}</div>${(s.exercises||[]).map(e=>`<div class="exr"><div><div class="exn">${e.name}</div><div class="exsub">${e.weight} ${e.note?'- '+e.note:''}</div></div><div><div class="exd">${e.sets}</div><div class="exrt">${e.rest}</div></div></div>`).join('')}</div>`).join('')
+  p.innerHTML=`<div style="font-family:'Anton',sans-serif;font-size:16px;letter-spacing:.05em;margin-bottom:10px">${wo.type}</div>`
+  +(wo.sections||[]).map(s=>`<div class="exs"><div class="exsl">${s.label}</div>${(s.exercises||[]).map(e=>`<div class="exr"><div><div class="exn">${e.name}</div><div class="exsub">${e.weight}${e.note?' - '+e.note:''}</div></div><div><div class="exd">${e.sets}</div><div class="exrt">${e.rest}</div></div></div>`).join('')}</div>`).join('')
   +`<div class="wsum"><div class="wsi"><span>${wo.duration}</span><span>Duration</span></div><div class="wsi"><span>~${wo.calories}</span><span>Cal Burned</span></div></div>`;
 }
 
-// ── GROCERY ────────────────────────────────────────────────────────────────────
+// ── GROCERY ───────────────────────────────────────────────────────────────────
 async function openGrocery(){
   document.getElementById('gMod').classList.add('open');
   if(S.groc){renderGroc(S.groc);return;}
@@ -407,26 +755,26 @@ async function openGrocery(){
   document.getElementById('gbody').innerHTML='<div class="load"><div class="spin"></div><div class="stxt">Building list...</div></div>';
 
   const mealNames=S.plan.days.map(d=>`${d.day}: ${(d.meals||[]).map(m=>m.name).join(', ')}`).join('\n');
-  const prompt=`Create a weekly grocery list from these meals. Output ONLY category sections in this exact format:
+  const prepItems=S.plan.days.filter(d=>d.prepPlan).map(d=>d.prepPlan.items.map(i=>i.name+' '+i.qty).join(', ')).join(', ');
+
+  const prompt=`Create a weekly grocery list. Output ONLY this format:
 
 CATEGORY: Proteins
 ITEM: Chicken breast | 2.5 lbs
-ITEM: Wild salmon | 1.5 lbs
+ITEM: Wild salmon fillets | 1.5 lbs
 
-CATEGORY: Produce
-ITEM: Spinach | 2 bags
-
-Use these categories: Proteins, Produce, Grains and Carbs, Dairy and Eggs, Pantry and Condiments
+Use categories: Proteins, Produce, Grains and Carbs, Dairy and Eggs, Pantry and Condiments, Supplements
+Scale quantities for ${S.prefs.household} people for meal prep.
 Never include bananas, cucumbers, cottage cheese.
 Consolidate duplicates. One item per line. No extra text.
 
 Meals this week:
-${mealNames}`;
+${mealNames}
+${prepItems?'Sunday prep items: '+prepItems:''}`;
 
   try{
     const raw=await callAPI(prompt,1000);
-    S.groc=parseGrocery(raw);
-    save();renderGroc(S.groc);
+    S.groc=parseGrocery(raw); save(); renderGroc(S.groc);
   }catch(e){
     document.getElementById('gbody').innerHTML=`<div class="ebox"><strong>Error</strong>${e.message}</div>`;
   }
@@ -436,20 +784,23 @@ function parseGrocery(raw){
   const cats=[];let cur=null;
   raw.split('\n').forEach(line=>{
     line=line.trim();
-    if(line.startsWith('CATEGORY:')){
-      cur={name:line.replace('CATEGORY:','').trim(),items:[]};
-      cats.push(cur);
-    }else if(line.startsWith('ITEM:')&&cur){
-      const parts=line.replace('ITEM:','').split('|');
-      cur.items.push({name:parts[0].trim(),qty:parts[1]?parts[1].trim():'1 unit'});
-    }
+    if(line.startsWith('CATEGORY:')){cur={name:line.replace('CATEGORY:','').trim(),items:[]};cats.push(cur);}
+    else if(line.startsWith('ITEM:')&&cur){const parts=line.replace('ITEM:','').split('|');cur.items.push({name:parts[0].trim(),qty:parts[1]?parts[1].trim():'1 unit'});}
   });
   return{categories:cats};
 }
 
 function renderGroc(g){
   const total=(g.categories||[]).reduce((a,c)=>a+c.items.length,0);
-  document.getElementById('gbody').innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase">Week ${S.w} - ${total} items</span><div style="display:flex;gap:5px"><button class="btn" onclick="clearChecks()" style="font-size:9px;padding:3px 8px">Clear</button><button class="btn" onclick="copyGroc()" style="font-size:9px;padding:3px 8px">Copy</button></div></div>`
+  const peopleNote=S.prefs.household>1?` (scaled for ${S.prefs.household} people)`:'';
+  document.getElementById('gbody').innerHTML=
+    `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase">Week ${S.w}${peopleNote} - ${total} items</span>
+      <div style="display:flex;gap:5px">
+        <button class="btn" onclick="clearChecks()" style="font-size:9px;padding:3px 8px">Clear</button>
+        <button class="btn" onclick="copyGroc()" style="font-size:9px;padding:3px 8px">Copy</button>
+      </div>
+    </div>`
   +(g.categories||[]).map(cat=>`<div class="gcat"><div class="gcttl">${cat.name}</div>${(cat.items||[]).map((item,i)=>{const k=cat.name+i,on=S.checks[k]||false;return`<div class="gi${on?' done':''}" id="gi-${k}"><div class="gc${on?' on':''}" onclick="togCheck('${k}')"></div><span class="gq">${item.qty}</span><span>${item.name}</span></div>`;}).join('')}</div>`).join('')
   +`<button class="btn gold" onclick="copyGroc()" style="width:100%;margin-top:8px">Copy Full List</button>`;
 }
@@ -464,12 +815,12 @@ function togCheck(k){
 function clearChecks(){S.checks={};save();renderGroc(S.groc);}
 function copyGroc(){
   if(!S.groc)return;
-  let t='WEEK '+S.w+' GROCERY LIST\n\n';
-  S.groc.categories.forEach(c=>{t+=c.name.toUpperCase()+'\n';c.items.forEach(i=>t+='  [ ] '+(i.qty+'     ').slice(0,10)+' '+i.name+'\n');t+='\n';});
+  let t=`WEEK ${S.w} GROCERY LIST (${S.prefs.household} people)\n\n`;
+  S.groc.categories.forEach(c=>{t+=c.name.toUpperCase()+'\n';c.items.forEach(i=>t+='  [ ] '+(i.qty+'        ').slice(0,10)+' '+i.name+'\n');t+='\n';});
   navigator.clipboard.writeText(t).then(()=>toast('Copied','ok'));
 }
 
-// ── EMAIL ──────────────────────────────────────────────────────────────────────
+// ── EMAIL ─────────────────────────────────────────────────────────────────────
 async function openEmail(){
   document.getElementById('eMod').classList.add('open');
   const eEl=document.getElementById('eTo');
@@ -478,7 +829,7 @@ async function openEmail(){
   if(S.ecache[S.day]){document.getElementById('eBody').value=S.ecache[S.day];return;}
   document.getElementById('eBody').value='Generating schedule...';
   const txt=await genEmail(S.day);
-  document.getElementById('eBody').value=txt||'Could not generate. Try New Week first.';
+  document.getElementById('eBody').value=txt||'Generate a week plan first.';
 }
 function copyEmail(){
   const b=document.getElementById('eBody').value;
@@ -512,24 +863,21 @@ function updateProg(){
   document.getElementById('wchip').textContent='Week '+S.w+' - Phase '+S.ph;
 }
 
-// ── API ────────────────────────────────────────────────────────────────────────
+// ── API ───────────────────────────────────────────────────────────────────────
 async function callAPI(prompt,maxTokens){
-  const res=await fetch('/api/claude',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({prompt,maxTokens:maxTokens||1000})
-  });
+  const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,maxTokens:maxTokens||1000})});
   const data=await res.json();
   if(!res.ok)throw new Error(data.error||'Server error '+res.status);
   if(!data.content)throw new Error('No content in response');
   return data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
 }
 
-// ── UTILS ──────────────────────────────────────────────────────────────────────
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function openSettings(){document.getElementById('setMod').classList.add('open');loadSettingsUI();buildIngredientGrids();}
 function setLoad(id,msg){document.getElementById(id).innerHTML='<div class="load"><div class="spin"></div><div class="stxt">'+msg+'</div></div>';}
 function showErr(id,msg){if(!msg){document.getElementById(id).innerHTML='';return;}document.getElementById(id).innerHTML='<div class="ebox"><strong>Error</strong> '+msg+'</div>';}
 function closeAll(){document.querySelectorAll('.ov').forEach(o=>o.classList.remove('open'));}
-function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type||'');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type||'');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
 document.querySelectorAll('.ov').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
 
 init();
