@@ -265,14 +265,11 @@ const PHASE_CFG = {
   3: { label:'Cut',    startWk:9,  cal:'1,350–1,500', protein:'185g', carbs:'Aggressive cycling', hiit:'2-3x/week',     note:'Deep cut. Visceral fat elimination. Peak volume.' },
   4: { label:'Final',  startWk:19, cal:'1,300–1,500', protein:'190g', carbs:'Very low rest days', hiit:'3x/week',       note:'Camera-ready. Glycogen loading in final 2 weeks.' }
 };
-const PROFILE = `PROFILE: Male, 38yo, Portland OR. Weight 194.6lbs, BF 27.8%, Lean 140.5lbs, Visceral Fat 10, BMR 1747.
-Blood: Glucose 81, HbA1c 5.5, TG 50, HDL 57, LDL 159 HIGH, Cholesterol 224 HIGH.
-Meds: Wegovy oral semaglutide (4mg now, 9mg soon). Take pill on waking, 30min before eating.
-Goal: Visible abs, ~159lbs, ~12% BF in 6-7 months.
-NEVER include: bananas, cucumbers, cottage cheese, soups.
-LDL foods required: salmon 3x/wk min, sardines 1x/wk, oat bran daily, chickpeas/walnuts/olive oil.
-Protein sources: chicken breast, turkey, fish, egg whites, whey isolate, Greek yogurt, shrimp. Red meat max 2x/wk.
-Saturday = refeed (~1900-2000cal, higher carbs). Sunday = rest + low cal.`;
+const PROFILE = `Male 38yo, 194.6lbs, BF 27.8%, LDL 159 HIGH. Wegovy semaglutide. Goal: ~159lbs 12% BF.
+NEVER: bananas, cucumbers, cottage cheese, soups.
+REQUIRED: salmon 3x/wk, sardines 1x/wk, oat bran 3x/wk.
+Protein: chicken, turkey, fish, egg whites, whey isolate, Greek yogurt, shrimp. Red meat max 2x/wk.
+Saturday=refeed ~1900cal. Sunday=rest ~1200cal.`;
 
 let S = {
   currentWeek: 1, currentPhase: 1, currentDay: 0,
@@ -364,7 +361,11 @@ Respond ONLY with raw valid JSON, no markdown:
   try {
     const data = await callClaude(prompt, 8000);
     const raw = data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
-    S.plan = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    const cleaned = raw.replace(/```json|```/g,'').replace(/[\u2018\u2019]/g,"'").replace(/[\u201C\u201D]/g,'"').trim();
+    const jStart = cleaned.indexOf('{');
+    const jEnd = cleaned.lastIndexOf('}');
+    if (jStart === -1 || jEnd === -1) throw new Error('No JSON in response — try again.');
+    S.plan = JSON.parse(cleaned.slice(jStart, jEnd + 1));
     S.grocery = null; S.emailCache = {};
     saveState();
     updateProgress();
@@ -470,7 +471,10 @@ async function openGrocery() {
   try {
     const data = await callClaude(prompt, 2000);
     const raw = data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
-    S.grocery = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    const gc = raw.replace(/```json|```/g,'').replace(/[\u2018\u2019]/g,"'").replace(/[\u201C\u201D]/g,'"').trim();
+    const gs = gc.indexOf('{'); const ge = gc.lastIndexOf('}');
+    if (gs === -1 || ge === -1) throw new Error('No JSON in grocery response — try again.');
+    S.grocery = JSON.parse(gc.slice(gs, ge + 1));
     saveState();
     renderGrocery(S.grocery);
   } catch(e) {

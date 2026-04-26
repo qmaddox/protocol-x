@@ -1,5 +1,10 @@
 {
   "rewrites": [
     { "source": "/api/claude", "destination": "/api/claude.js" }
-  ]
+  ],
+  "functions": {
+    "api/claude.js": {
+      "maxDuration": 60
+    }
+  }
 }
